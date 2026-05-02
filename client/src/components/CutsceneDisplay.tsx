@@ -31,7 +31,7 @@ export default function CutsceneDisplay({
         {/* Cat Paws */}
         <div style={{ textAlign: "center", margin: "10px -20px" }}>
           <img
-            src="/images/progress1.png"
+            src={image}
             alt="Cat paws"
             style={{ width: "100%", height: "auto" }}
           />

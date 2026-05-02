@@ -16,18 +16,18 @@ type QuizState =
   | "checkpoint"
   | "result";
 
-// Placeholder cutscene images - will be replaced when user uploads
+// Progress cutscene images — hand-drawn art from image/progress1/
 const cutsceneImages = [
-  "https://via.placeholder.com/800x600?text=Cutscene+1",
-  "https://via.placeholder.com/800x600?text=Cutscene+2",
-  "https://via.placeholder.com/800x600?text=Cutscene+3",
-  "https://via.placeholder.com/800x600?text=Cutscene+4",
-  "https://via.placeholder.com/800x600?text=Cutscene+5",
-  "https://via.placeholder.com/800x600?text=Cutscene+6",
-  "https://via.placeholder.com/800x600?text=Cutscene+7",
-  "https://via.placeholder.com/800x600?text=Cutscene+8",
-  "https://via.placeholder.com/800x600?text=Cutscene+9",
-  "https://via.placeholder.com/800x600?text=Cutscene+10",
+  "/images/progress1.png",
+  "/images/progress2.png",
+  "/images/progress3.png",
+  "/images/progress4.png",
+  "/images/progress5.png",
+  "/images/progress6.png",
+  "/images/progress7.png",
+  "/images/progress8.png",
+  "/images/progress9.png",
+  "/images/progress10.png",
 ];
 
 export default function Quiz() {
