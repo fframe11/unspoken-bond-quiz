@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unspoken Bond - รักนะ เมี๊ยวเมี๊ยว</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Mali', cursive;
+            background-color: #fdfbf7;
+            color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .phone-screen {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border: 4px solid #1a1a1a;
+            border-radius: 20px;
+            box-shadow: 8px 8px 0px #1a1a1a;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* ปุ่มเปิด-ปิดเสียง */
+        .sound-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #fff9e6;
+            border: 2px solid #1a1a1a;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #1a1a1a;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+
+        .sound-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #1a1a1a;
+        }
+
+        .cat-doodle {
+            font-size: 60px;
+            margin: 15px 0;
+        }
+
+        .scene-box {
+            border: 3px dashed #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            background-color: #fff9e6;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        /* ปุ่มตัวเลือก */
+        .btn {
+            display: block;
+            width: 100%;
+            background: #ffffff;
+            border: 3px solid #1a1a1a;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-family: 'Mali', cursive;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #1a1a1a;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #1a1a1a;
+            background-color: #e6f9ff;
+        }
+
+        /* เกจพลังตอนเปลี่ยนฉาก */
+        .progress-container {
+            width: 100%;
+            height: 25px;
+            background-color: #ffffff;
+            border: 3px solid #1a1a1a;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #ffb703;
+            border-right: 3px solid #1a1a1a;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* เลย์เอาต์หน้าผลลัพธ์ */
+        .result-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff5722;
+            text-shadow: 1px 1px 0px #1a1a1a;
+            margin-top: 0;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .info-box {
+            background-color: #ffe6f0;
+            border: 3px dashed #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .quote-box {
+            font-style: italic;
+            font-weight: 600;
+            font-size: 14px;
+            color: #d84315;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= ส่วนอัปโหลดไฟล์เสียง ================= -->
+    <!-- นำไฟล์ดนตรีของคุณมาไว้ในโฟลเดอร์เดียวกัน แล้วเปลี่ยนชื่อตรง src เป็นชื่อไฟล์ของคุณ -->
+    <audio id="bgMusic" loop>
+        <source src="bensound-theelevatorbossanova.mp3" type="audio/mpeg">
+    </audio>
+    <!-- ===================================================== -->
+
+    <div class="phone-screen">
+        <!-- ปุ่มควบคุมเสียง -->
+        <button class="sound-btn" id="soundToggle" onclick="toggleSound()">🔇</button>
+
+        <!-- 1. หน้าเริ่มเกม -->
+        <div id="start-screen" class="screen active">
+            <h2>✨ Unspoken Bond รักนะ เมี๊ยวเมี๊ยว ✨</h2>
+            <div class="cat-doodle">(=｀ω´=)</div>
+            <div class="scene-box">
+                คุณตื่นขึ้นมาในร่างวิญญาณโปร่งแสง "ริน" เจ้าของของคุณกลับมาบ้านพร้อมหมอกสีเทาแห่งความเศร้า...
+                คุณจะเยียวยาเธออย่างไร?
+            </div>
+            <button class="btn" onclick="startGame()" style="background-color: #1a1a1a; color: white;">เริ่มเกมเลย!
+                🐾</button>
+        </div>
+
+        <!-- 2. หน้าคำถาม -->
+        <div id="game-screen" class="screen">
+            <h3 id="scene-title" style="margin-top: 0;">Scene 1</h3>
+            <div id="scene-desc" class="scene-box">
+                รินเดินเข้ามาในบ้านพร้อมความเหนื่อยล้า หมอกสีเทาจางๆ ปกคลุมเธออยู่...
+            </div>
+            <div id="choices-container"></div>
+        </div>
+
+        <!-- 3. หน้าฉากกั้น -->
+        <div id="transition-screen" class="screen">
+            <div class="cat-doodle" style="animation: float 2s infinite;">✨🐈✨</div>
+            <div id="transition-desc" class="scene-box" style="background-color: #e6f9ff;">
+                รินหยุดชะงักที่หน้าประตู เธอขมวดคิ้วเหมือนได้ยินเสียงแว่วมาในอากาศ...
+            </div>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-fill"></div>
+            </div>
+            <button class="btn" onclick="nextScene()">ไปต่อ 🐾</button>
+        </div>
+
+        <!-- 4. หน้าผลลัพธ์ -->
+        <div id="result-screen" class="screen">
+            <h2 class="result-title">ร่างที่แท้จริงของคุณ!</h2>
+            <div class="cat-doodle">🐈🍊</div>
+            <h3 id="result-name" style="margin: 5px 0;">แมวส้มจอมซูมมี่ (ESTP)</h3>
+            <div id="result-subtitle" class="result-subtitle">"เดอะ ซูมมี่ส้มหยุด ผู้ปั่นป่วนความเศร้า"</div>
+
+            <div class="info-box" id="result-desc">
+                คุณไม่ใช่สายซัพพอร์ตที่มานั่งร้องไห้เป็นเพื่อน แต่คุณคือตัวตึงที่พร้อมจะ "กระชาก"
+                รินให้หลุดจากความเศร้าด้วยความวายปวง!
+            </div>
+
+            <div class="quote-box">
+                "ไม่ต้องเศร้าไปหรอกนะมนุษย์! เอาเวลาที่นั่งเหม่อ ไปเปิดทูน่าให้ฉันดีกว่า!"
+            </div>
+
+            <button class="btn" style="background-color: #1a1a1a; color: white;">📸 แชร์ผลลัพธ์ลง Story</button>
+            <button class="btn" onclick="location.reload()">🔄 เล่นอีกครั้ง</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- ระบบเสียง ---
+        let isSoundOn = false;
+        const bgMusic = document.getElementById('bgMusic');
+        const soundBtn = document.getElementById('soundToggle');
+
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            if (isSoundOn) {
+                soundBtn.innerText = "🔊";
+                bgMusic.volume = 0.5;
+                bgMusic.play().catch(e => console.log("รอผู้เล่นโต้ตอบกับหน้าเว็บก่อนเล่นเสียง"));
+            } else {
+                soundBtn.innerText = "🔇";
+                bgMusic.pause();
+            }
+        }
+
+        // --- ลอจิกเกม ---
+        let currentScene = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        const scenes = [
+            {
+                title: "Scene 1: เสียงประตูเปิด",
+                desc: "รินเดินเข้ามาในบ้านพร้อมความเหนื่อยล้า หมอกสีเทาจางๆ ปกคลุมเธออยู่",
+                choices: [
+                    { text: "ก. ร้อง แง้ววว! เสียงดังลั่น", mbti: ['E'] },
+                    { text: "ข. นั่งมองเงียบๆ รอให้ทัก", mbti: ['I'] },
+                    { text: "ค. วิ่งนำหน้าไปที่ชามข้าว", mbti: ['E', 'S'] },
+                    { text: "ง. แอบสังเกตการณ์หลังโซฟา", mbti: ['I', 'N'] }
+                ],
+                transition: "รินหยุดชะงักที่หน้าประตู เธอขมวดคิ้วเหมือนได้ยินเสียง 'เมี๊ยว' แว่วมาในอากาศ รอยยิ้มจางๆ ปรากฏขึ้น อุ้งเท้าของคุณเริ่มมีสีสันจางๆ..."
+            },
+            {
+                title: "Scene 2: โหมดเหม่อลอย",
+                desc: "รินนั่งนิ่งมองกำแพง หมอกสีเทาเริ่มไหลมารวมกันที่หัวไหล่เธอ",
+                choices: [
+                    { text: "ก. เดินไปเขี่ยเท้าชวนให้ลุก", mbti: ['S'] },
+                    { text: "ข. นั่งจ้องหน้าพยายามอ่านใจ", mbti: ['N'] },
+                    { text: "ค. คาบสายชาร์จแบตมาวางไว้ให้", mbti: ['S', 'T'] },
+                    { text: "ง. นอนหงายท้องบิดตัวท่าแปลกๆ", mbti: ['N', 'P'] }
+                ],
+                transition: "รินก้มลงมองที่ว่างข้างตัว เธอรู้สึกถึงไออุ่นบางอย่าง หางของคุณเริ่มฟูขึ้นและมีลวดลายชัดเจน..."
+            },
+            {
+                title: "Scene 3: เมื่อน้ำตาไหล",
+                desc: "ความเงียบทำพิษ หยดน้ำตาของรินหยดลงบนพื้น",
+                choices: [
+                    { text: "ก. รีบวิ่งไปซุกอกไถน้ำตาให้", mbti: ['F'] },
+                    { text: "ข. ไปคาบทิชชู่มาวางกวนๆ", mbti: ['T'] },
+                    { text: "ค. ทำของตกแรงๆ ให้ตกใจ", mbti: ['T', 'P'] },
+                    { text: "ง. นั่งพิงขาไว้เงียบๆ", mbti: ['F', 'J'] }
+                ],
+                transition: "หมอกสีเทาที่ไหล่เริ่มแตกตัว รินสูดหายใจเข้าลึกๆ ร่างกายของคุณเริ่มหนาแน่นขึ้นจนบังแสงไฟได้..."
+            }
+            // *สามารถคัดลอกโครงสร้างด้านบนเพื่อเพิ่ม Scene 4 - 10 ได้ที่นี่*
+        ];
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            if (!isSoundOn) toggleSound(); // เปิดเสียงอัตโนมัติเมื่อกดเริ่ม
+            renderScene();
+            switchScreen('game-screen');
+        }
+
+        function renderScene() {
+            if (currentScene >= scenes.length) {
+                calculateResult();
+                return;
+            }
+            const scene = scenes[currentScene];
+            document.getElementById('scene-title').innerText = scene.title;
+            document.getElementById('scene-desc').innerText = scene.desc;
+
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+
+            scene.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = choice.text;
+                btn.onclick = () => selectOption(choice.mbti, scene.transition);
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(mbtiTraits, transitionText) {
+            mbtiTraits.forEach(trait => scores[trait]++);
+            document.getElementById('transition-desc').innerText = transitionText;
+
+            const progressPct = ((currentScene + 1) / scenes.length) * 100;
+            document.getElementById('progress-bar').style.width = progressPct + '%';
+
+            switchScreen('transition-screen');
+        }
+
+        function nextScene() {
+            currentScene++;
+            if (currentScene < scenes.length) {
+                renderScene();
+                switchScreen('game-screen');
+            } else {
+                calculateResult();
+            }
+        }
+
+        function calculateResult() {
+            // คำนวณผลลัพธ์จากคะแนนที่สะสมไว้
+            const typeE = scores.E >= scores.I ? 'E' : 'I';
+            const typeS = scores.S >= scores.N ? 'S' : 'N';
+            const typeT = scores.T >= scores.F ? 'T' : 'F';
+            const typeJ = scores.J >= scores.P ? 'J' : 'P';
+
+            const finalMBTI = typeE + typeS + typeT + typeJ;
+            console.log("Your MBTI:", finalMBTI);
+
+            // โชว์หน้าผลลัพธ์ (สามารถเขียนเงื่อนไข If-Else เพื่อเปลี่ยนข้อมูลตาม MBTI ได้ในอนาคต)
+            switchScreen('result-screen');
+        }
+    </script>
+
+</body>
+
+</html>
