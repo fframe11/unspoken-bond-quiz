@@ -19,10 +19,15 @@ export default function CutsceneDisplay({
   currentQuestion = 0,
   totalQuestions = 10,
 }: CutsceneDisplayProps) {
-  const progressPercent = Math.round(((currentQuestion + 1) / totalQuestions) * 100);
+  const progressPercent = Math.round(
+    ((currentQuestion + 1) / totalQuestions) * 100
+  );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8" style={{ backgroundColor: "#fdfbf7" }}>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
+      style={{ backgroundColor: "#fdfbf7" }}
+    >
       {/* Phone Frame Card */}
       <div className="phone-screen relative animate-fadeIn">
         {/* Sound Toggle */}
@@ -68,11 +73,11 @@ export default function CutsceneDisplay({
         {/* CTA Button */}
         {isLastQuestion ? (
           <button className="btn-dark" onClick={onViewResult}>
-            ดูผลลัพธ์ ✨
+            ดูผลลัพธ์
           </button>
         ) : (
           <button className="btn-handdrawn" onClick={onNext}>
-            ไปต่อ 🐾
+            ไปต่อ
           </button>
         )}
       </div>

@@ -77,7 +77,8 @@ export default function Quiz() {
     answers.forEach((answerIndex, questionIndex) => {
       const option = questions[questionIndex].options[answerIndex];
       Object.keys(option.scores).forEach((key: string) => {
-        scores[key as keyof typeof scores] += option.scores[key as keyof typeof option.scores];
+        scores[key as keyof typeof scores] +=
+          option.scores[key as keyof typeof option.scores];
       });
     });
     return scores;
@@ -99,18 +100,15 @@ export default function Quiz() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#fdfbf7" }}>
-      {state === "landing" && (
-        <LandingPage onNext={handleLandingNext} />
-      )}
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: "#fdfbf7" }}
+    >
+      {state === "landing" && <LandingPage onNext={handleLandingNext} />}
 
-      {state === "intro" && (
-        <IntroScene onNext={handleStartQuiz} />
-      )}
+      {state === "intro" && <IntroScene onNext={handleStartQuiz} />}
 
-      {state === "entry" && (
-        <EntryScene onNext={handleEnterHome} />
-      )}
+      {state === "entry" && <EntryScene onNext={handleEnterHome} />}
 
       {state === "questions" && (
         <div className="w-full">
@@ -137,9 +135,17 @@ export default function Quiz() {
       )}
 
       {state === "checkpoint" && (
-        <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundColor: "#fdfbf7" }}>
+        <div
+          className="min-h-screen flex items-center justify-center px-4 py-8"
+          style={{ backgroundColor: "#fdfbf7" }}
+        >
           <div className="phone-screen">
-            <div className="cat-doodle" style={{ animation: "float 2s infinite" }}>✨🪞✨</div>
+            <div
+              className="cat-doodle"
+              style={{ animation: "float 2s infinite", fontSize: "34px" }}
+            >
+              ผลลัพธ์
+            </div>
             <h2 style={{ fontSize: "20px", fontWeight: 700, margin: "10px 0" }}>
               วิญญาณของคุณชัดเจนขึ้นแล้ว
             </h2>
@@ -147,17 +153,14 @@ export default function Quiz() {
               เดินไปที่กระจกเงาเพื่อดูร่างที่แท้จริงของคุณ
             </div>
             <button className="btn-dark" onClick={handleViewResult}>
-              ดูผลลัพธ์ ✨
+              ดูผลลัพธ์
             </button>
           </div>
         </div>
       )}
 
       {state === "result" && (
-        <ResultCard
-          scores={calculateScores()}
-          onRetake={handleRetake}
-        />
+        <ResultCard scores={calculateScores()} onRetake={handleRetake} />
       )}
     </div>
   );

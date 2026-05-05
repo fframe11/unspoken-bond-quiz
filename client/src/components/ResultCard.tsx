@@ -12,7 +12,11 @@ interface ResultCardProps {
 // dominant = สุ่มค่า 700-999, secondary = 300-600, minor = 50-250
 type CatAuraProfile = {
   dominant: "ดุ" | "อ้อน" | "กวน";
-  weights: { ดุ: [number, number]; อ้อน: [number, number]; กวน: [number, number] };
+  weights: {
+    ดุ: [number, number];
+    อ้อน: [number, number];
+    กวน: [number, number];
+  };
 };
 
 const catAuraProfiles: Record<string, CatAuraProfile> = {
@@ -102,9 +106,9 @@ function getAuraStats(mbti: string) {
 }
 
 const auraConfig = {
-  ดุ: { emoji: "😼", color: "#E74C3C", label: "ความดุ", bgColor: "#FDEDEC" },
-  อ้อน: { emoji: "🥺", color: "#FF69B4", label: "ความอ้อน", bgColor: "#FFF0F5" },
-  กวน: { emoji: "😈", color: "#FF8C00", label: "ความกวน", bgColor: "#FFF5E6" },
+  ดุ: { color: "#E74C3C", label: "ความดุ", bgColor: "#FDEDEC" },
+  อ้อน: { color: "#FF69B4", label: "ความอ้อน", bgColor: "#FFF0F5" },
+  กวน: { color: "#FF8C00", label: "ความกวน", bgColor: "#FFF5E6" },
 };
 
 const colorNames: Record<string, string> = {
@@ -153,42 +157,42 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   };
 
   const handleShare = () => {
-    const text = `ฉันเป็น ${petData.name} (${petData.mbti}) ใน Unspoken Bond Quiz! 🐾\n\nออร่า: ดุ +${auraStats["ดุ"]} | อ้อน +${auraStats["อ้อน"]} | กวน +${auraStats["กวน"]}\n\n${petData.description}\n\nคุณล่ะ? มาทดสอบกันเถอะ!`;
+    const text = `ฉันเป็น ${petData.name} (${petData.mbti}) ใน Unspoken Bond Quiz!\n\nออร่า: ดุ +${auraStats["ดุ"]} | อ้อน +${auraStats["อ้อน"]} | กวน +${auraStats["กวน"]}\n\n${petData.description}\n\nคุณล่ะ? มาทดสอบกันเถอะ!`;
 
     if (navigator.share) {
-      navigator.share({
-        title: "Unspoken Bond - สายใยไร้เสียง",
-        text: text,
-      }).catch(() => {
-        alert("ไม่สามารถแชร์ได้ในเบราว์เซอร์นี้");
-      });
+      navigator
+        .share({
+          title: "Unspoken Bond - สายใยไร้เสียง",
+          text: text,
+        })
+        .catch(() => {
+          alert("ไม่สามารถแชร์ได้ในเบราว์เซอร์นี้");
+        });
     } else {
       alert(text);
     }
   };
 
   return (
-    <div style={{ backgroundColor: "#fdfbf7" }} className="min-h-screen flex items-center justify-center p-4 md:p-8">
+    <div
+      style={{ backgroundColor: "#fdfbf7" }}
+      className="min-h-screen flex items-center justify-center p-4 md:p-8"
+    >
       {/* Phone Frame Card */}
       <div className="phone-screen result-screen relative animate-fadeIn">
         {/* Sound Toggle */}
         <SoundToggle />
 
         {/* Result Title */}
-        <h2 className="result-title" style={{ marginBottom: "6px" }}>ร่างที่แท้จริงของคุณ!</h2>
-
-        {/* Cat Doodle */}
-        <div className="cat-doodle" style={{ fontSize: "28px", margin: "2px 0 8px" }}>🐈🍊</div>
+        <h2 className="result-title" style={{ marginBottom: "6px" }}>
+          ร่างที่แท้จริงของคุณ!
+        </h2>
 
         {petData.image && (
           <div
             className="result-hero-image overflow-hidden"
             style={{
-              border: "4px solid #1a1a1a",
-              borderRadius: "14px",
-              margin: "0 -12px 12px",
-              backgroundColor: "#fff9e6",
-              boxShadow: "5px 5px 0 #1a1a1a",
+              margin: "-12px -26px 8px",
             }}
           >
             <img
@@ -203,7 +207,14 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         <h3 style={{ margin: "6px 0 2px", fontSize: "22px", lineHeight: 1.25 }}>
           {petData.name} ({petData.mbti})
         </h3>
-        <p style={{ fontSize: "13px", color: "#555", margin: "0 0 10px", lineHeight: 1.45 }}>
+        <p
+          style={{
+            fontSize: "13px",
+            color: "#555",
+            margin: "0 0 10px",
+            lineHeight: 1.45,
+          }}
+        >
           "{petData.description}"
         </p>
 
@@ -217,11 +228,18 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             backgroundColor: "#fff9e6",
           }}
         >
-          <p style={{ fontWeight: 700, fontSize: "13px", textAlign: "center", marginBottom: "8px" }}>
-            ⚡ Aura Stats ⚡
+          <p
+            style={{
+              fontWeight: 700,
+              fontSize: "13px",
+              textAlign: "center",
+              marginBottom: "8px",
+            }}
+          >
+            Aura Stats
           </p>
 
-          {(["ดุ", "อ้อน", "กวน"] as const).map((key) => {
+          {(["ดุ", "อ้อน", "กวน"] as const).map(key => {
             const config = auraConfig[key];
             const value = auraStats[key];
             const barPercent = (value / 999) * 100;
@@ -230,9 +248,16 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             return (
               <div key={key} style={{ marginBottom: "7px" }}>
                 {/* Label row */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "4px",
+                  }}
+                >
                   <span style={{ fontSize: "12px", fontWeight: 600 }}>
-                    {config.emoji} {config.label}
+                    {config.label}
                   </span>
                   <span
                     style={{
@@ -242,7 +267,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
                     }}
                   >
                     +{value}
-                    {isDominant && " 🔥"}
                   </span>
                 </div>
                 {/* Bar */}
@@ -261,7 +285,8 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
                       height: "100%",
                       width: `${barPercent}%`,
                       backgroundColor: config.color,
-                      borderRight: barPercent > 5 ? "2px solid #1a1a1a" : "none",
+                      borderRight:
+                        barPercent > 5 ? "2px solid #1a1a1a" : "none",
                       transition: "width 0.8s ease-out",
                     }}
                   />
@@ -273,8 +298,11 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
         {/* Info Box */}
         <div className="info-box result-compact-box">
-          <p><strong>💜 Love Language:</strong> {petData.loveLanguage}</p>
-          <p><strong>✨ สีออร่า:</strong>{" "}
+          <p>
+            <strong>Love Language:</strong> {petData.loveLanguage}
+          </p>
+          <p>
+            <strong>สีออร่า:</strong>{" "}
             <span
               style={{
                 display: "inline-block",
@@ -289,26 +317,52 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             />
             {colorNames[petData.auraColor] || petData.auraColor}
           </p>
-          <p><strong>🐾 ไอเทมลับ:</strong> {petData.secretItem}</p>
+          <p>
+            <strong>ไอเทมลับ:</strong> {petData.secretItem}
+          </p>
         </div>
 
         {/* Analysis Box */}
-        <div className="scene-box result-compact-box" style={{ backgroundColor: "#e6f9ff", textAlign: "left", fontSize: "13px" }}>
-          <p style={{ fontWeight: 700, marginBottom: "8px" }}>🔍 ทำไมคุณถึงเป็นแมวตัวนี้?</p>
-          <p>{petData.analysis || petData.message || "การตัดสินใจของคุณสะท้อนให้เห็นบุคลิกภาพที่เป็นเอกลักษณ์"}</p>
+        <div
+          className="scene-box result-compact-box"
+          style={{
+            backgroundColor: "#e6f9ff",
+            textAlign: "left",
+            fontSize: "13px",
+          }}
+        >
+          <p style={{ fontWeight: 700, marginBottom: "8px" }}>
+            ทำไมคุณถึงเป็นแมวตัวนี้?
+          </p>
+          <p>
+            {petData.analysis ||
+              petData.message ||
+              "การตัดสินใจของคุณสะท้อนให้เห็นบุคลิกภาพที่เป็นเอกลักษณ์"}
+          </p>
         </div>
 
         {/* Quote */}
-        <div className="quote-box" style={{ fontSize: "13px", lineHeight: 1.5, marginBottom: "14px" }}>
-          "{petData.quote || petData.shareCaption || "ไม่มีสัตว์เลี้ยงตัวไหนเหมือนกัน แต่ทุกตัวล้วนพิเศษ"}"
+        <div
+          className="quote-box"
+          style={{ fontSize: "13px", lineHeight: 1.5, marginBottom: "14px" }}
+        >
+          "
+          {petData.quote ||
+            petData.shareCaption ||
+            "ไม่มีสัตว์เลี้ยงตัวไหนเหมือนกัน แต่ทุกตัวล้วนพิเศษ"}
+          "
         </div>
 
         {/* Action Buttons */}
         <button className="btn-dark" onClick={handleShare}>
-          📸 แชร์ผลลัพธ์ลง Story
+          แชร์ผลลัพธ์ลง Story
         </button>
-        <button className="btn-handdrawn" onClick={onRetake} style={{ marginTop: "8px" }}>
-          🔄 เล่นอีกครั้ง
+        <button
+          className="btn-handdrawn"
+          onClick={onRetake}
+          style={{ marginTop: "8px" }}
+        >
+          เล่นอีกครั้ง
         </button>
       </div>
     </div>

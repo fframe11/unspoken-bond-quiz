@@ -9,7 +9,7 @@ export default function SoundToggle() {
       onClick={toggleSound}
       aria-label={isSoundOn ? "ปิดเสียง" : "เปิดเสียง"}
     >
-      {isSoundOn ? "🔊" : "🔇"}
+      {isSoundOn ? "ON" : "OFF"}
     </button>
   );
 }
