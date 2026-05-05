@@ -275,7 +275,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ESTP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ESTP.png",
     shareCaption:
       "ถึงฉันจะชอบวิ่งชนข้าวของพัง แต่ฉันก็พุ่งชนความเศร้าของแกจนพังเหมือนกันนะนังมนุษย์! 🧡✨",
   },
@@ -292,7 +292,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ESFP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ESFP.png",
     shareCaption:
       "ฉันนิ่มนวลแต่ใจแข็งแกร่ง ให้ฉันเป็นตุ๊กตาผ้าของคุณสักครู่นะ 💕",
   },
@@ -309,7 +309,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ESTJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ESTJ.png",
     shareCaption:
       "ฉันเป็นหัวหน้าบ้าน ไม่ใช่เพราะใจร้าย แต่เพราะรักคุณมากจึงต้องเฝ้าดู 👑",
   },
@@ -326,7 +326,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ENTP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ENTP.png",
     shareCaption:
       "ฉันแกล้งเขี่ยของตกเพราะรักคุณ ไม่ใช่เพราะชั่ว 😼✨",
   },
@@ -343,7 +343,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "INFP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/INFP.png",
     shareCaption:
       "ฉันนอนหงายให้คุณเห็นพุงเพราะเชื่อใจคุณ นั่นแหละความรัก 💜",
   },
@@ -360,7 +360,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ISFP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ISFP.png",
     shareCaption:
       "ฉันไม่พูดมาก แต่การนั่งข้างคุณเงียบๆ ก็พูดได้ทั้งหมดแล้ว 🤍",
   },
@@ -377,7 +377,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "INFJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/INFJ.png",
     shareCaption:
       "ฉันรู้ว่าคุณเศร้า ก่อนที่คุณจะพูด นั่นคือพลังของการเข้าใจ 💫",
   },
@@ -394,7 +394,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ENFP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ENFP.png",
     shareCaption:
       "ขาสั้นแต่ความรักยาว! มาเล่นกับฉันแล้วลืมความเศร้าไป 🧡✨",
   },
@@ -411,7 +411,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "INTJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/INTJ.png",
     shareCaption:
       "ฉันมองคุณแบบนี้ไม่ใช่เพราะตัดสิน แต่เพราะรักคุณมากจึงต้องเข้าใจ 🖤",
   },
@@ -428,7 +428,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ISTJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ISTJ.png",
     shareCaption:
       "ฉันไม่พูดเยอะ แต่ฉันอยู่เคียงข้างคุณเสมอ นั่นแหละความรักของฉัน 🤎",
   },
@@ -445,7 +445,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ISFJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ISFJ.png",
     shareCaption:
       "ฉันยอมให้คุณหวีขนเพราะรักคุณ ให้คุณได้รู้สึกว่ามีคนดูแล 💕",
   },
@@ -462,7 +462,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ENTJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ENTJ.png",
     shareCaption:
       "ฉันตะโกนสั่งเพราะรักคุณ ต้องให้คุณพักผ่อนและดูแลตัวเอง 💪",
   },
@@ -479,7 +479,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "INTP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/INTP.png",
     shareCaption:
       "ฉันนั่งข้างคุณตอนคิด เพราะฉันเข้าใจว่าบางครั้งคุณต้องการคนฟังเท่านั้น 🧠",
   },
@@ -496,7 +496,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ISTP",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ISTP.png",
     shareCaption:
       "ฉันไปหาของมาให้คุณ ไม่ใช่เพราะเก่ง แต่เพราะรักคุณและอยากให้คุณยิ้ม 🎁",
   },
@@ -513,7 +513,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ENFJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ENFJ.png",
     shareCaption:
       "ฉันทำขนมปังบนตัวคุณเพราะรักคุณ ให้คุณรู้สึกอบอุ่นและปลอดภัย 💗",
   },
@@ -530,7 +530,7 @@ export const catBreeds: Record<string, CatBreed> = {
     mbti: "ESFJ",
     analysis: "",
     quote: "",
-    image: undefined,
+    image: "/images/mbti/ESFJ.png",
     shareCaption:
       "ฉันพูดคุยกับคุณเพราะรักคุณ ทุกเสียง 'หง่าว' ก็เต็มไปด้วยรัก 💕",
   },

@@ -166,6 +166,27 @@
     justify-content: center;
   }
 
+  .result-screen {
+    max-width: 460px;
+    padding: 22px 18px;
+    justify-content: flex-start;
+  }
+
+  .result-hero-image {
+    width: calc(100% + 24px);
+  }
+
+  .result-compact-box {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .result-compact-box p {
+    margin: 4px 0;
+  }
+
   /* Scene Box - Dashed border story container */
   .scene-box {
     border: 3px dashed #1a1a1a;

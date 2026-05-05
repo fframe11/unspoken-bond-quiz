@@ -13,7 +13,16 @@ const optionLabels = ["ก.", "ข.", "ค.", "ง."];
 
 // Scene images — add more as user provides them
 const sceneImages: Record<number, string> = {
-  1: "/images/scene1_q.png",
+  1: "/images/scene/scene1.png",
+  2: "/images/scene/scene2.png",
+  3: "/images/scene/scene3.png",
+  4: "/images/scene/scene4.png",
+  5: "/images/scene/scene5.png",
+  6: "/images/scene/scene6.png",
+  7: "/images/scene/scene7.png",
+  8: "/images/scene/scene8.png",
+  9: "/images/scene/scene9.png",
+  10: "/images/scene/scene10.png",
 };
 
 export default function QuestionCard({
