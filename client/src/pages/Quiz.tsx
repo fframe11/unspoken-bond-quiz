@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { questions, calculateMBTI, type Question } from "@/lib/quizDataNew";
+import { questions, calculateMBTI } from "@/lib/quizDataNew";
 import LandingPage from "@/components/LandingPage";
 import IntroScene from "@/components/IntroScene";
 import EntryScene from "@/components/EntryScene";
 import QuestionCard from "@/components/QuestionCard";
 import ResultCard from "@/components/ResultCard";
 import CutsceneDisplay from "@/components/CutsceneDisplay";
+import PageTransition from "@/components/PageTransition";
 
 type QuizState =
   | "landing"
@@ -16,7 +17,6 @@ type QuizState =
   | "checkpoint"
   | "result";
 
-// Progress cutscene images — hand-drawn art from image/progress1/
 const cutsceneImages = [
   "/images/progress1.png",
   "/images/progress2.png",
@@ -36,6 +36,7 @@ export default function Quiz() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [mbti, setMbti] = useState<string>("");
   const [isAnswered, setIsAnswered] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const handleLandingNext = () => {
     setState("intro");
@@ -50,24 +51,25 @@ export default function Quiz() {
   };
 
   const handleAnswerSelect = (optionIndex: number) => {
+    if (isAnswered) return;
+
     const newAnswers = [...answers, optionIndex];
     setAnswers(newAnswers);
     setIsAnswered(true);
+    setSelectedAnswer(optionIndex);
 
-    // Show cutscene after a short delay
     setTimeout(() => {
       setState("cutscene");
-    }, 500);
+    }, 650);
   };
 
   const handleCutsceneNext = () => {
     if (currentQuestion < questions.length - 1) {
-      // Move to next question
       setCurrentQuestion(currentQuestion + 1);
       setIsAnswered(false);
+      setSelectedAnswer(null);
       setState("questions");
     } else {
-      // All questions answered, show checkpoint before result
       setState("checkpoint");
     }
   };
@@ -96,72 +98,68 @@ export default function Quiz() {
     setAnswers([]);
     setMbti("");
     setIsAnswered(false);
+    setSelectedAnswer(null);
     setState("landing");
   };
 
+  const transitionKey = state === "questions" ? `q-${currentQuestion}` : state === "cutscene" ? `c-${currentQuestion}` : state;
+
   return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ backgroundColor: "#fdfbf7" }}
-    >
-      {state === "landing" && <LandingPage onNext={handleLandingNext} />}
+    <div className="min-h-screen flex items-center justify-center" style={{ position: "relative", zIndex: 1 }}>
+      <PageTransition keyName={transitionKey}>
+        {state === "landing" && <LandingPage onNext={handleLandingNext} />}
 
-      {state === "intro" && <IntroScene onNext={handleStartQuiz} />}
+        {state === "intro" && <IntroScene onNext={handleStartQuiz} />}
 
-      {state === "entry" && <EntryScene onNext={handleEnterHome} />}
+        {state === "entry" && <EntryScene onNext={handleEnterHome} />}
 
-      {state === "questions" && (
-        <div className="w-full">
-          <QuestionCard
-            question={questions[currentQuestion]}
-            onSelectAnswer={handleAnswerSelect}
-            isAnswered={isAnswered}
-            questionNumber={currentQuestion + 1}
+        {state === "questions" && (
+          <div className="w-full">
+            <QuestionCard
+              question={questions[currentQuestion]}
+              onSelectAnswer={handleAnswerSelect}
+              isAnswered={isAnswered}
+              selectedOption={selectedAnswer}
+              questionNumber={currentQuestion + 1}
+              totalQuestions={questions.length}
+            />
+          </div>
+        )}
+
+        {state === "cutscene" && (
+          <CutsceneDisplay
+            image={cutsceneImages[currentQuestion]}
+            message={questions[currentQuestion].checkpoint || ""}
+            onNext={handleCutsceneNext}
+            isLastQuestion={currentQuestion === questions.length - 1}
+            onViewResult={handleViewResult}
+            currentQuestion={currentQuestion}
             totalQuestions={questions.length}
           />
-        </div>
-      )}
+        )}
 
-      {state === "cutscene" && (
-        <CutsceneDisplay
-          image={cutsceneImages[currentQuestion]}
-          message={questions[currentQuestion].checkpoint || ""}
-          onNext={handleCutsceneNext}
-          isLastQuestion={currentQuestion === questions.length - 1}
-          onViewResult={handleViewResult}
-          currentQuestion={currentQuestion}
-          totalQuestions={questions.length}
-        />
-      )}
-
-      {state === "checkpoint" && (
-        <div
-          className="min-h-screen flex items-center justify-center px-4 py-8"
-          style={{ backgroundColor: "#fdfbf7" }}
-        >
-          <div className="phone-screen">
-            <div
-              className="cat-doodle"
-              style={{ animation: "float 2s infinite", fontSize: "34px" }}
-            >
-              ผลลัพธ์
+        {state === "checkpoint" && (
+          <div className="quiz-page">
+            <div className="phone-screen checkpoint-screen animate-fadeIn">
+              <div className="cat-doodle" style={{ animation: "float 2s infinite" }}>
+                ✦
+              </div>
+              <h2>ร่างแมวของคุณกำลังจะปรากฏ</h2>
+              <div className="scene-box">
+                ทุกคำตอบกำลังรวมตัวเป็นภาพเดียว เดินไปที่กระจกเงา
+                แล้วดูว่าความรักแบบเงียบ ๆ ของคุณกลายเป็นแมวตัวไหน
+              </div>
+              <button className="btn-dark btn-pulse" onClick={handleViewResult}>
+                ดูผลลัพธ์
+              </button>
             </div>
-            <h2 style={{ fontSize: "20px", fontWeight: 700, margin: "10px 0" }}>
-              วิญญาณของคุณชัดเจนขึ้นแล้ว
-            </h2>
-            <div className="scene-box">
-              เดินไปที่กระจกเงาเพื่อดูร่างที่แท้จริงของคุณ
-            </div>
-            <button className="btn-dark" onClick={handleViewResult}>
-              ดูผลลัพธ์
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {state === "result" && (
-        <ResultCard scores={calculateScores()} onRetake={handleRetake} />
-      )}
+        {state === "result" && (
+          <ResultCard scores={calculateScores()} onRetake={handleRetake} />
+        )}
+      </PageTransition>
     </div>
   );
 }

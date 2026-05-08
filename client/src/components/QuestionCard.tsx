@@ -6,6 +6,7 @@ interface QuestionCardProps {
   question: Question;
   onSelectAnswer: (optionIndex: number) => void;
   isAnswered?: boolean;
+  selectedOption?: number | null;
   questionNumber?: number;
   totalQuestions?: number;
 }
@@ -29,6 +30,7 @@ export default function QuestionCard({
   question,
   onSelectAnswer,
   isAnswered = false,
+  selectedOption = null,
   questionNumber = 1,
   totalQuestions = 10,
 }: QuestionCardProps) {
@@ -72,7 +74,9 @@ export default function QuestionCard({
               key={index}
               onClick={() => onSelectAnswer(index)}
               disabled={isAnswered}
-              className="btn-handdrawn answer-option"
+              className={`btn-handdrawn answer-option ${
+                selectedOption === index ? "is-selected" : ""
+              }`}
             >
               <span className="answer-label">{optionLabels[index]}</span>
               <span>{option.text}</span>
