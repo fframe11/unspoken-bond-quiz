@@ -1,7 +1,6 @@
 import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
 import { useRef, useState } from "react";
-import html2canvas from "html2canvas-pro";
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -163,6 +162,39 @@ function getReadableLoveLanguage(value: string) {
   return match?.[1] || value;
 }
 
+function wrapCanvasText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+) {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let line = "";
+
+  words.forEach((word) => {
+    const nextLine = line ? `${line} ${word}` : word;
+    if (context.measureText(nextLine).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = nextLine;
+    }
+  });
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+async function loadShareImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
 export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const mbtiType = calculateMBTI(scores as any);
   const pet = getResultCat(mbtiType);
@@ -197,16 +229,139 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const topTrait = [...statRows].sort((a, b) => b.value - a.value)[0];
 
   const handleShare = async () => {
-    if (!shareRef.current) return;
     setSharing(true);
 
     try {
-      const canvas = await html2canvas(shareRef.current, {
-        backgroundColor: "#f7f7f2",
-        scale: 3,
-        useCORS: true,
-        logging: false,
+      await document.fonts.ready;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1920;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Unable to create share canvas");
+
+      const brandRed = "#e60012";
+      const ink = "#243047";
+      const muted = "#697386";
+
+      context.fillStyle = "#f7f7f2";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      const gradient = context.createLinearGradient(0, 0, canvas.width, 860);
+      gradient.addColorStop(0, "#fff3c4");
+      gradient.addColorStop(0.55, "#ffffff");
+      gradient.addColorStop(1, "#eef8fc");
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, canvas.width, 920);
+
+      context.fillStyle = "#e60012";
+      context.beginPath();
+      context.roundRect(78, 78, 924, 22, 999);
+      context.fill();
+
+      if (pet.image) {
+        const catImage = await loadShareImage(pet.image);
+        const maxWidth = 760;
+        const maxHeight = 610;
+        const imageRatio = catImage.width / catImage.height;
+        const boxRatio = maxWidth / maxHeight;
+        const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
+        const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
+        const drawX = (canvas.width - drawWidth) / 2;
+        const drawY = 165 + (maxHeight - drawHeight) / 2;
+
+        context.save();
+        context.shadowColor = "rgba(36,48,71,0.14)";
+        context.shadowBlur = 28;
+        context.shadowOffsetY = 18;
+        context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
+        context.restore();
+      }
+
+      context.fillStyle = brandRed;
+      context.beginPath();
+      context.roundRect(426, 780, 228, 78, 999);
+      context.fill();
+      context.fillStyle = "#ffffff";
+      context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+      context.textAlign = "center";
+      context.fillText(pet.mbti, 540, 831);
+
+      context.fillStyle = ink;
+      context.font = "800 66px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+      context.fillText(pet.name, 540, 945);
+
+      context.fillStyle = muted;
+      context.font = "700 34px 'IBM Plex Sans Thai', sans-serif";
+      wrapCanvasText(context, profile.headline, 820)
+        .slice(0, 2)
+        .forEach((line, index) => {
+          context.fillText(line, 540, 1002 + index * 44);
+        });
+
+      context.fillStyle = "#ffffff";
+      context.shadowColor = "rgba(36,48,71,0.12)";
+      context.shadowBlur = 18;
+      context.shadowOffsetY = 10;
+      context.beginPath();
+      context.roundRect(90, 1110, 900, 248, 34);
+      context.fill();
+      context.shadowColor = "transparent";
+
+      context.textAlign = "left";
+      context.fillStyle = muted;
+      context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
+      context.fillText("จุดที่คนรอบตัวสัมผัสได้", 140, 1170);
+      context.fillStyle = brandRed;
+      context.font = "800 46px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+      context.fillText(topTrait.title, 140, 1230);
+      context.fillStyle = "#3a4658";
+      context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
+      wrapCanvasText(context, profile.insight, 800)
+        .slice(0, 3)
+        .forEach((line, index) => {
+          context.fillText(line, 140, 1285 + index * 40);
+        });
+
+      let statY = 1440;
+      statRows.forEach((row) => {
+        context.fillStyle = ink;
+        context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+        context.fillText(row.title, 110, statY);
+        context.textAlign = "right";
+        context.fillText(String(row.value), 970, statY);
+        context.textAlign = "left";
+        context.fillStyle = "#edf2f5";
+        context.beginPath();
+        context.roundRect(110, statY + 18, 860, 22, 999);
+        context.fill();
+        context.fillStyle = row.color;
+        context.beginPath();
+        context.roundRect(
+          110,
+          statY + 18,
+          Math.max(130, (860 * row.value) / maxScore),
+          22,
+          999
+        );
+        context.fill();
+        statY += 88;
       });
+
+      context.fillStyle = "#ffffff";
+      context.beginPath();
+      context.roundRect(90, 1750, 900, 104, 28);
+      context.fill();
+      context.fillStyle = muted;
+      context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
+      context.fillText("จำไว้สั้น ๆ", 136, 1792);
+      context.fillStyle = ink;
+      context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+      wrapCanvasText(context, profile.careTip, 760)
+        .slice(0, 2)
+        .forEach((line, index) => {
+          context.fillText(line, 136, 1834 + index * 34);
+        });
 
       canvas.toBlob(async (blob) => {
         if (!blob) {

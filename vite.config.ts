@@ -245,7 +245,6 @@ export default defineConfig({
         manualChunks: {
           react: ["react", "react-dom"],
           motion: ["framer-motion"],
-          capture: ["html2canvas-pro"],
           icons: ["lucide-react"],
         },
       },
