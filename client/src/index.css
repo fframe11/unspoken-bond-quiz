@@ -353,12 +353,37 @@
     background: linear-gradient(135deg, #5f2eea 0%, #b832ff 48%, #ffbf2f 100%);
   }
 
+  .result-rank-medal.mythical-honor {
+    background: linear-gradient(135deg, #4f46e5 0%, #9b5cff 42%, #ff5edb 100%);
+  }
+
+  .result-rank-medal.mythical-glory {
+    background: linear-gradient(135deg, #4b2cff 0%, #b832ff 38%, #ffd84d 100%);
+  }
+
+  .result-rank-medal.mythical-immortal {
+    background: linear-gradient(135deg, #1f145c 0%, #7b2cff 34%, #ff3bbd 66%, #ffd84d 100%);
+  }
+
   .result-rank-medal.legend {
     background: linear-gradient(135deg, #ffbf2f 0%, #ff7a00 54%, #e60012 100%);
   }
 
   .result-rank-medal.epic {
     background: linear-gradient(135deg, #7b2cff 0%, #5f2eea 52%, #00a7e1 100%);
+  }
+
+  .result-rank-medal.grandmaster {
+    background: linear-gradient(135deg, #e60012 0%, #ff4f5e 54%, #ffbf2f 100%);
+  }
+
+  .result-rank-medal.master {
+    background: linear-gradient(135deg, #ff8c1a 0%, #ffbf2f 56%, #fff3c4 100%);
+    color: #453300;
+  }
+
+  .result-rank-medal.elite {
+    background: linear-gradient(135deg, #2f80ed 0%, #00a7e1 58%, #7ddfff 100%);
   }
 
   .result-name-lockup span {

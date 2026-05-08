@@ -335,12 +335,28 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const topTrait = [...statRows].sort((a, b) => b.value - a.value)[0];
   const secondTrait = [...statRows].sort((a, b) => b.value - a.value)[1] || topTrait;
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
-  const tier =
-    topTrait.value >= 6
-      ? { label: "MYTHIC", sub: "แรงค์สูงสุดของแมวสายรัก", tone: "mythic" }
-      : topTrait.value >= 5
-        ? { label: "LEGEND", sub: "ทีมไฟต์หัวใจไว้ใจได้", tone: "legend" }
-        : { label: "EPIC", sub: "พลังรักเริ่มชัดในทีม", tone: "epic" };
+  const mbtiTierMap: Record<
+    string,
+    { label: string; sub: string; tone: string }
+  > = {
+    ESTP: { label: "ELITE", sub: "แรงค์แมวสายไว", tone: "elite" },
+    INFP: { label: "MASTER", sub: "แรงค์แมวใจลึก", tone: "master" },
+    ISFP: { label: "GRANDMASTER", sub: "แรงค์แมวละมุน", tone: "grandmaster" },
+    ISTP: { label: "GRANDMASTER", sub: "แรงค์แมวช่วยเงียบ", tone: "grandmaster" },
+    ESFP: { label: "EPIC", sub: "แรงค์แมวเติมสีสัน", tone: "epic" },
+    INTP: { label: "EPIC", sub: "แรงค์แมวคู่คิด", tone: "epic" },
+    ESFJ: { label: "LEGEND", sub: "แรงค์แมวดูแลทีม", tone: "legend" },
+    ISTJ: { label: "LEGEND", sub: "แรงค์แมวมั่นคง", tone: "legend" },
+    ENTP: { label: "MYTHIC", sub: "แรงค์แมวพลิกเกม", tone: "mythic" },
+    ISFJ: { label: "MYTHIC", sub: "แรงค์แมวซัพพอร์ต", tone: "mythic" },
+    ENFP: { label: "MYTHICAL HONOR", sub: "แรงค์แมวปลุกใจ", tone: "mythical-honor" },
+    ESTJ: { label: "MYTHICAL HONOR", sub: "แรงค์แมวคุมจังหวะ", tone: "mythical-honor" },
+    ENFJ: { label: "MYTHICAL GLORY", sub: "แรงค์แมวฮีลทั้งทีม", tone: "mythical-glory" },
+    INTJ: { label: "MYTHICAL GLORY", sub: "แรงค์แมววางแผน", tone: "mythical-glory" },
+    ENTJ: { label: "MYTHICAL IMMORTAL", sub: "แรงค์แมวนำไฟต์", tone: "mythical-immortal" },
+    INFJ: { label: "MYTHICAL IMMORTAL", sub: "แรงค์แมวอ่านใจ", tone: "mythical-immortal" },
+  };
+  const tier = mbtiTierMap[pet.mbti] || mbtiTierMap[mbtiType] || mbtiTierMap.ESTP;
   const keywords = [
     topTrait.title,
     secondTrait.title,
