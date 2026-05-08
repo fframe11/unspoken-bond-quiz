@@ -594,20 +594,30 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </div>
 
           <div className="result-detail-card">
-            <p className="result-summary">{profile.hook}</p>
+            <div className="result-stage-brief">
+              <span>PLAYER INSIGHT</span>
+              <p>{profile.hook}</p>
+            </div>
 
-            <div className="result-keyword-row" aria-label="คีย์เวิร์ดผลลัพธ์">
-              {keywords.map((keyword) => (
-                <span key={keyword}>{keyword}</span>
-              ))}
+            <div className="result-power-panel">
+              <strong>POWER-UP SLOTS</strong>
+              <div className="result-keyword-row" aria-label="คีย์เวิร์ดผลลัพธ์">
+                {keywords.map((keyword, index) => (
+                  <span key={keyword}>
+                    <i>{index + 1}</i>
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="result-callout-line">
+              <span>BONUS LINE</span>
               <strong>“{profile.careTip}”</strong>
             </div>
 
             <div className="result-party">
-              <h3>ทีมร่วมปาร์ตี้ที่น่าจะเล่นด้วยกันได้</h3>
+              <h3>เพื่อนร่วมด่านที่พลังเข้ากัน</h3>
               <div className="result-gang-row">
                 {gangCats.map((cat) => (
                   <div className="result-gang-card" key={cat?.mbti}>
