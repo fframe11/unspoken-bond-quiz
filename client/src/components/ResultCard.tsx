@@ -1,114 +1,25 @@
-import { getResultCat, calculateMBTI } from "@/lib/quizDataNew";
+import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
-import { useMemo } from "react";
+import { useRef, useState } from "react";
+import html2canvas from "html2canvas-pro";
 
 interface ResultCardProps {
   scores: Record<string, number>;
   onRetake: () => void;
 }
 
-// ========== ระบบออร่า 3 สาย ==========
-// แบ่งแมว 16 ตัว → สายหลัก + ค่าน้ำหนักออร่า 3 ด้าน
-// dominant = สุ่มค่า 700-999, secondary = 300-600, minor = 50-250
-type CatAuraProfile = {
-  dominant: "ดุ" | "อ้อน" | "กวน";
-  weights: {
-    ดุ: [number, number];
-    อ้อน: [number, number];
-    กวน: [number, number];
-  };
+const auraLabels: Record<string, string> = {
+  E: "พลังเข้าหาโลก",
+  S: "พลังจับรายละเอียด",
+  T: "พลังเหตุผล",
+  J: "พลังจัดทิศทาง",
 };
 
-const catAuraProfiles: Record<string, CatAuraProfile> = {
-  // === สายดุ (Fierce) ===
-  ESTJ: {
-    dominant: "ดุ",
-    weights: { ดุ: [850, 999], อ้อน: [50, 180], กวน: [100, 300] },
-  },
-  ENTJ: {
-    dominant: "ดุ",
-    weights: { ดุ: [800, 999], อ้อน: [80, 200], กวน: [200, 450] },
-  },
-  INTJ: {
-    dominant: "ดุ",
-    weights: { ดุ: [750, 950], อ้อน: [50, 150], กวน: [100, 350] },
-  },
-  ISTJ: {
-    dominant: "ดุ",
-    weights: { ดุ: [700, 900], อ้อน: [100, 250], กวน: [50, 200] },
-  },
-
-  // === สายอ้อน (Sweet/Clingy) ===
-  ESFP: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 150], อ้อน: [850, 999], กวน: [200, 450] },
-  },
-  INFP: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 120], อ้อน: [800, 999], กวน: [100, 300] },
-  },
-  ISFP: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 100], อ้อน: [750, 950], กวน: [80, 250] },
-  },
-  INFJ: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 130], อ้อน: [800, 999], กวน: [50, 200] },
-  },
-  ISFJ: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 100], อ้อน: [780, 960], กวน: [50, 180] },
-  },
-  ENFJ: {
-    dominant: "อ้อน",
-    weights: { ดุ: [80, 200], อ้อน: [850, 999], กวน: [150, 400] },
-  },
-  ESFJ: {
-    dominant: "อ้อน",
-    weights: { ดุ: [50, 150], อ้อน: [880, 999], กวน: [200, 450] },
-  },
-
-  // === สายกวน (Mischievous) ===
-  ESTP: {
-    dominant: "กวน",
-    weights: { ดุ: [200, 450], อ้อน: [150, 400], กวน: [850, 999] },
-  },
-  ENTP: {
-    dominant: "กวน",
-    weights: { ดุ: [300, 550], อ้อน: [80, 250], กวน: [800, 999] },
-  },
-  ENFP: {
-    dominant: "กวน",
-    weights: { ดุ: [50, 200], อ้อน: [350, 600], กวน: [750, 999] },
-  },
-  INTP: {
-    dominant: "กวน",
-    weights: { ดุ: [150, 350], อ้อน: [100, 300], กวน: [700, 950] },
-  },
-  ISTP: {
-    dominant: "กวน",
-    weights: { ดุ: [200, 400], อ้อน: [80, 250], กวน: [720, 950] },
-  },
-};
-
-function randomInRange(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getAuraStats(mbti: string) {
-  const profile = catAuraProfiles[mbti] || catAuraProfiles["ESTP"];
-  return {
-    ดุ: randomInRange(...profile.weights["ดุ"]),
-    อ้อน: randomInRange(...profile.weights["อ้อน"]),
-    กวน: randomInRange(...profile.weights["กวน"]),
-    dominant: profile.dominant,
-  };
-}
-
-const auraConfig = {
-  ดุ: { color: "#E74C3C", label: "ความดุ", bgColor: "#FDEDEC" },
-  อ้อน: { color: "#FF69B4", label: "ความอ้อน", bgColor: "#FFF0F5" },
-  กวน: { color: "#FF8C00", label: "ความกวน", bgColor: "#FFF5E6" },
+const auraColors: Record<string, string> = {
+  E: "#e879f9",
+  S: "#67e8f9",
+  T: "#7c5ce0",
+  J: "#fbbf24",
 };
 
 const colorNames: Record<string, string> = {
@@ -129,239 +40,275 @@ const colorNames: Record<string, string> = {
   "#FF1493": "ชมพูเข้ม",
 };
 
-// ========== Component ==========
 export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const mbtiType = calculateMBTI(scores as any);
   const pet = getResultCat(mbtiType);
-
-  // useMemo so aura stats don't re-randomize on re-render
-  const auraStats = useMemo(() => getAuraStats(mbtiType), [mbtiType]);
+  const shareRef = useRef<HTMLDivElement>(null);
+  const [sharing, setSharing] = useState(false);
 
   if (!pet) {
-    return <div className="text-center p-8">ไม่พบผลลัพธ์</div>;
+    return (
+      <div className="quiz-page">
+        <div className="phone-screen">
+          <div className="scene-box">ยังไม่พบผลลัพธ์ ลองเล่นใหม่อีกครั้งนะ</div>
+          <button className="btn-dark" onClick={onRetake}>
+            เริ่มใหม่
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  const petData = {
-    nameThai: pet.nameThai || pet.name,
-    name: pet.name,
-    description: pet.description,
-    mbti: pet.mbti,
-    loveLanguage: pet.loveLanguage,
-    auraColor: pet.auraColor,
-    secretItem: pet.secretItem,
-    image: pet.image,
-    analysis: pet.analysis,
-    quote: pet.quote,
-    shareCaption: pet.shareCaption,
-    message: pet.message,
-  };
+  const maxScore = Math.max(...Object.values(scores), 1);
+  const auraColorName = colorNames[pet.auraColor] || pet.auraColor;
 
-  const handleShare = () => {
-    const text = `ฉันเป็น ${petData.name} (${petData.mbti}) ใน Unspoken Bond Quiz!\n\nออร่า: ดุ +${auraStats["ดุ"]} | อ้อน +${auraStats["อ้อน"]} | กวน +${auraStats["กวน"]}\n\n${petData.description}\n\nคุณล่ะ? มาทดสอบกันเถอะ!`;
+  const handleShare = async () => {
+    if (!shareRef.current) return;
+    setSharing(true);
 
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Unspoken Bond - สายใยไร้เสียง",
-          text: text,
-        })
-        .catch(() => {
-          alert("ไม่สามารถแชร์ได้ในเบราว์เซอร์นี้");
-        });
-    } else {
-      alert(text);
+    try {
+      const canvas = await html2canvas(shareRef.current, {
+        backgroundColor: "#fff8ec",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      canvas.toBlob(async (blob) => {
+        if (!blob) { setSharing(false); return; }
+
+        const file = new File([blob], "unspoken-bond-result.png", { type: "image/png" });
+
+        // Try native share with file (mobile)
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({
+              title: "Unspoken Bond Quiz",
+              text: `ฉันคือ ${pet.name} (${pet.mbti})`,
+              files: [file],
+            });
+            setSharing(false);
+            return;
+          } catch { /* fallback below */ }
+        }
+
+        // Fallback: download the image
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "unspoken-bond-result.png";
+        a.click();
+        URL.revokeObjectURL(url);
+        setSharing(false);
+      }, "image/png");
+    } catch {
+      setSharing(false);
     }
   };
 
   return (
-    <div
-      style={{ backgroundColor: "#fdfbf7" }}
-      className="min-h-screen flex items-center justify-center p-4 md:p-8"
-    >
-      {/* Phone Frame Card */}
+    <div className="quiz-page">
       <div className="phone-screen result-screen relative animate-fadeIn">
-        {/* Sound Toggle */}
         <SoundToggle />
 
-        {/* Result Title */}
-        <h2 className="result-title" style={{ marginBottom: "6px" }}>
-          ร่างที่แท้จริงของคุณ!
-        </h2>
-
-        {petData.image && (
-          <div
-            className="result-hero-image overflow-hidden"
-            style={{
-              margin: "-12px -26px 8px",
-            }}
-          >
-            <img
-              src={petData.image}
-              alt={`${petData.name} result`}
-              style={{ display: "block", width: "100%", height: "auto" }}
-            />
-          </div>
-        )}
-
-        {/* Pet Name */}
-        <h3 style={{ margin: "6px 0 2px", fontSize: "22px", lineHeight: 1.25 }}>
-          {petData.name} ({petData.mbti})
-        </h3>
-        <p
-          style={{
-            fontSize: "13px",
-            color: "#555",
-            margin: "0 0 10px",
-            lineHeight: 1.45,
-          }}
-        >
-          "{petData.description}"
-        </p>
-
-        {/* ========== Aura Stats Box ========== */}
+        {/* === Shareable card region === */}
         <div
+          ref={shareRef}
           style={{
-            border: "2px solid #1a1a1a",
-            borderRadius: "10px",
-            padding: "10px",
-            marginBottom: "10px",
-            backgroundColor: "#fff9e6",
+            background: "#fff8ec",
+            border: "3px solid #ffffff",
+            borderRadius: "28px",
+            padding: "0",
+            overflow: "hidden",
+            boxShadow: "0 10px 0 #d7edf8",
           }}
         >
-          <p
-            style={{
-              fontWeight: 700,
-              fontSize: "13px",
+          {/* Hero image — full width bleed */}
+          {pet.image && (
+            <div style={{
+              background: "linear-gradient(135deg, #fff1c7, #dff8f1)",
+              padding: "16px 0 8px",
               textAlign: "center",
+            }}>
+              <img
+                src={pet.image}
+                alt={`${pet.name} result`}
+                style={{ width: "100%", maxHeight: "340px", objectFit: "contain", display: "block" }}
+              />
+            </div>
+          )}
+
+          {/* MBTI badge + name — overlapping style */}
+          <div style={{ padding: "18px 20px 14px", position: "relative" }}>
+            <div style={{
+              display: "inline-flex",
+              padding: "5px 14px",
+              borderRadius: "999px",
+              background: "#ef4444",
+              border: "2px solid #ffffff",
+              fontSize: "13px",
+              fontWeight: 700,
+              color: "#ffffff",
+              fontFamily: "'IBM Plex Sans Thai', sans-serif",
               marginBottom: "8px",
-            }}
-          >
-            Aura Stats
-          </p>
+              boxShadow: "0 5px 0 #b91c1c",
+            }}>
+              {pet.mbti}
+            </div>
+            <h3 style={{
+              fontFamily: "'Noto Serif Thai', serif",
+              fontSize: "24px",
+              fontWeight: 800,
+              color: "#243047",
+              margin: "4px 0 6px",
+              lineHeight: 1.2,
+            }}>
+              {pet.name}
+            </h3>
+            <p style={{
+              fontFamily: "'IBM Plex Sans Thai', sans-serif",
+              color: "#526071",
+              fontSize: "13px",
+              lineHeight: 1.55,
+              margin: 0,
+            }}>
+              {pet.description}
+            </p>
+          </div>
 
-          {(["ดุ", "อ้อน", "กวน"] as const).map(key => {
-            const config = auraConfig[key];
-            const value = auraStats[key];
-            const barPercent = (value / 999) * 100;
-            const isDominant = auraStats.dominant === key;
-
-            return (
-              <div key={key} style={{ marginBottom: "7px" }}>
-                {/* Label row */}
-                <div
-                  style={{
+          {/* Aura bars — compact */}
+          <div style={{ padding: "0 20px 14px" }}>
+            <div style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: "#697386",
+              textTransform: "uppercase" as const,
+              letterSpacing: 0,
+              marginBottom: "8px",
+              fontFamily: "'IBM Plex Sans Thai', sans-serif",
+            }}>
+              แผนที่ออร่า
+            </div>
+            {(["E", "S", "T", "J"] as const).map(key => {
+              const value = scores[key] ?? 0;
+              const width = `${Math.max(10, Math.round((value / maxScore) * 100))}%`;
+              return (
+                <div key={key} style={{ marginBottom: "6px" }}>
+                  <div style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "4px",
-                  }}
-                >
-                  <span style={{ fontSize: "12px", fontWeight: 600 }}>
-                    {config.label}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: isDominant ? "14px" : "13px",
-                      fontWeight: 700,
-                      color: config.color,
-                    }}
-                  >
-                    +{value}
-                  </span>
-                </div>
-                {/* Bar */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "12px",
-                    backgroundColor: "white",
-                    border: "2px solid #1a1a1a",
-                    borderRadius: "255px 15px 225px 15px/15px 225px 15px 255px",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: "#243047",
+                    marginBottom: "2px",
+                    fontFamily: "'IBM Plex Sans Thai', sans-serif",
+                  }}>
+                    <span>{auraLabels[key]}</span>
+                    <span>{value}</span>
+                  </div>
+                  <div style={{
+                    height: "8px",
+                    borderRadius: "999px",
+                    background: "#ffffff",
                     overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
+                  }}>
+                    <div style={{
+                      width,
                       height: "100%",
-                      width: `${barPercent}%`,
-                      backgroundColor: config.color,
-                      borderRight:
-                        barPercent > 5 ? "2px solid #1a1a1a" : "none",
-                      transition: "width 0.8s ease-out",
-                    }}
-                  />
+                      borderRadius: "999px",
+                      background: auraColors[key],
+                      transition: "width 1s ease",
+                    }} />
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+
+          {/* Love Language + Aura color — side by side bubbles */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "8px",
+            padding: "0 20px 14px",
+          }}>
+            <div style={{
+              padding: "10px 12px",
+              borderRadius: "16px",
+              background: "#fff2f5",
+              border: "2px solid #ffffff",
+              fontFamily: "'IBM Plex Sans Thai', sans-serif",
+              boxShadow: "0 5px 0 #ffd1df",
+            }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#697386", marginBottom: "3px", textTransform: "uppercase" as const, letterSpacing: 0 }}>Love Language</div>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "#243047" }}>{pet.loveLanguage}</div>
+            </div>
+            <div style={{
+              padding: "10px 12px",
+              borderRadius: "16px",
+              background: "#eaf8ff",
+              border: "2px solid #ffffff",
+              fontFamily: "'IBM Plex Sans Thai', sans-serif",
+              boxShadow: "0 5px 0 #c4e8fa",
+            }}>
+              <div style={{ fontSize: "10px", fontWeight: 700, color: "#697386", marginBottom: "3px", textTransform: "uppercase" as const, letterSpacing: 0 }}>สีออร่า</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{
+                  width: "14px",
+                  height: "14px",
+                  borderRadius: "50%",
+                  background: pet.auraColor,
+                  display: "inline-block",
+                  border: "2px solid #ffffff",
+                  boxShadow: `0 0 8px ${pet.auraColor}`,
+                }} />
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "#243047" }}>{auraColorName}</span>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
 
-        {/* Info Box */}
-        <div className="info-box result-compact-box">
-          <p>
-            <strong>Love Language:</strong> {petData.loveLanguage}
-          </p>
-          <p>
-            <strong>สีออร่า:</strong>{" "}
-            <span
-              style={{
-                display: "inline-block",
-                width: "16px",
-                height: "16px",
-                borderRadius: "50%",
-                backgroundColor: petData.auraColor,
-                border: "2px solid #1a1a1a",
-                verticalAlign: "middle",
-                marginRight: "6px",
-              }}
-            />
-            {colorNames[petData.auraColor] || petData.auraColor}
-          </p>
-          <p>
-            <strong>ไอเทมลับ:</strong> {petData.secretItem}
-          </p>
-        </div>
-
-        {/* Analysis Box */}
-        <div
-          className="scene-box result-compact-box"
-          style={{
-            backgroundColor: "#e6f9ff",
-            textAlign: "left",
+          {/* Quote */}
+          <div style={{
+            padding: "0 20px 16px",
+            fontFamily: "'Mali', cursive",
+            fontStyle: "italic",
             fontSize: "13px",
-          }}
-        >
-          <p style={{ fontWeight: 700, marginBottom: "8px" }}>
-            ทำไมคุณถึงเป็นแมวตัวนี้?
-          </p>
+            color: "#697386",
+            textAlign: "center",
+            lineHeight: 1.6,
+          }}>
+            "{pet.quote || pet.shareCaption || "ตัวตนของคุณไม่จำเป็นต้องดัง แค่จริงก็พอ"}"
+          </div>
+
+          {/* Branding watermark */}
+          <div style={{
+            textAlign: "center",
+            padding: "8px 0 14px",
+            fontSize: "10px",
+            color: "#9aa3af",
+            fontFamily: "'IBM Plex Sans Thai', sans-serif",
+            letterSpacing: 0,
+          }}>
+            Unspoken Bond Quiz ✦ สายใยไร้เสียง
+          </div>
+        </div>
+        {/* === End shareable region === */}
+
+        {/* Analysis — outside share card */}
+        <div className="scene-box result-compact-box result-analysis" style={{ marginTop: "10px" }}>
+          <strong>ทำไมถึงเป็นร่างนี้?</strong>
           <p>
-            {petData.analysis ||
-              petData.message ||
-              "การตัดสินใจของคุณสะท้อนให้เห็นบุคลิกภาพที่เป็นเอกลักษณ์"}
+            {pet.analysis ||
+              pet.message ||
+              "คำตอบของคุณสะท้อนวิธีมองโลก การตัดสินใจ และจังหวะการดูแลความสัมพันธ์ที่เป็นเอกลักษณ์ของคุณ"}
           </p>
         </div>
 
-        {/* Quote */}
-        <div
-          className="quote-box"
-          style={{ fontSize: "13px", lineHeight: 1.5, marginBottom: "14px" }}
-        >
-          "
-          {petData.quote ||
-            petData.shareCaption ||
-            "ไม่มีสัตว์เลี้ยงตัวไหนเหมือนกัน แต่ทุกตัวล้วนพิเศษ"}
-          "
-        </div>
-
-        {/* Action Buttons */}
-        <button className="btn-dark" onClick={handleShare}>
-          แชร์ผลลัพธ์ลง Story
+        {/* Action buttons */}
+        <button className="btn-dark" onClick={handleShare} disabled={sharing} style={{ marginTop: "8px" }}>
+          {sharing ? "กำลังสร้างรูป..." : "📸 แชร์ผลลัพธ์เป็นรูป (ลง IG Story)"}
         </button>
-        <button
-          className="btn-handdrawn"
-          onClick={onRetake}
-          style={{ marginTop: "8px" }}
-        >
+        <button className="btn-handdrawn" onClick={onRetake}>
           เล่นอีกครั้ง
         </button>
       </div>
