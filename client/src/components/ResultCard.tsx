@@ -2,6 +2,7 @@ import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -336,10 +337,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
   const tier =
     topTrait.value >= 6
-      ? { label: "Legendary", tone: "gold" }
+      ? { label: "MYTHIC", sub: "Top Lane Heart Carry", tone: "mythic" }
       : topTrait.value >= 5
-        ? { label: "Rare", tone: "blue" }
-        : { label: "Common", tone: "green" };
+        ? { label: "EPIC", sub: "Team Fight Support", tone: "epic" }
+        : { label: "ELITE", sub: "Roaming Soft Power", tone: "elite" };
   const keywords = [
     topTrait.title,
     secondTrait.title,
@@ -377,18 +378,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     .slice(0, 4)
     .map((type) => getResultCat(type))
     .filter(Boolean);
-  const radarSize = 220;
-  const radarCenter = radarSize / 2;
-  const radarRadius = 74;
-  const radarPoints = statRows
-    .map((row, index) => {
-      const angle = -Math.PI / 2 + (Math.PI * 2 * index) / statRows.length;
-      const strength = Math.max(0.18, row.value / maxScore);
-      const x = radarCenter + Math.cos(angle) * radarRadius * strength;
-      const y = radarCenter + Math.sin(angle) * radarRadius * strength;
-      return `${x},${y}`;
-    })
-    .join(" ");
 
   const createResultImageBlob = async () => {
     await document.fonts?.ready;
@@ -582,13 +571,20 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         <SoundToggle />
 
         <section ref={shareRef} className="result-collect-card" aria-label="การ์ดผลลัพธ์">
-          <div className="result-brand-line">unspoken-bond/cats</div>
-          <h1 className="result-main-title">เกิดใหม่เป็นแมว</h1>
+          <div className="result-stage-top">
+            <span>WORLD 10-CAT</span>
+            <strong>RESULT CLEAR</strong>
+          </div>
+          <h1 className="result-main-title">Cat Reborn Stage</h1>
 
           <div className="result-cat-portrait">
             {pet.image && (
               <img src={withAssetVersion(pet.image)} alt={`${pet.name} result`} />
             )}
+            <div className={`result-rank-medal ${tier.tone}`}>
+              <span>{tier.label}</span>
+              <small>{tier.sub}</small>
+            </div>
           </div>
 
           <div className="result-name-lockup">
@@ -606,13 +602,12 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               ))}
             </div>
 
-            <div className="result-tier-line">
-              <span className={`result-tier-pill ${tier.tone}`}>{tier.label}</span>
+            <div className="result-callout-line">
               <strong>“{profile.careTip}”</strong>
             </div>
 
-            <div className="result-gang">
-              <h3>แก๊งแมวใกล้เคียง</h3>
+            <div className="result-party">
+              <h3>ทีมร่วมปาร์ตี้ที่น่าจะเล่นด้วยกันได้</h3>
               <div className="result-gang-row">
                 {gangCats.map((cat) => (
                   <div className="result-gang-card" key={cat?.mbti}>
@@ -653,32 +648,27 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </div>
         )}
 
-        <section className="result-radar-panel">
+        <section className="result-world-panel">
           <div className="result-map-header">
-            <span>Love Aura Radar</span>
+            <span>Love Stage Route</span>
             <strong>{auraColorName}</strong>
           </div>
 
-          <div className="result-radar-wrap">
-            <svg viewBox={`0 0 ${radarSize} ${radarSize}`} role="img" aria-label="แผนที่ออร่าความรัก">
-              <circle cx={radarCenter} cy={radarCenter} r="74" />
-              <circle cx={radarCenter} cy={radarCenter} r="50" />
-              <circle cx={radarCenter} cy={radarCenter} r="26" />
-              {statRows.map((row, index) => {
-                const angle = -Math.PI / 2 + (Math.PI * 2 * index) / statRows.length;
-                const x = radarCenter + Math.cos(angle) * 86;
-                const y = radarCenter + Math.sin(angle) * 86;
-                return (
-                  <g key={row.key}>
-                    <line x1={radarCenter} y1={radarCenter} x2={x} y2={y} />
-                    <text x={x} y={y} textAnchor="middle" dominantBaseline="middle">
-                      {row.key}
-                    </text>
-                  </g>
-                );
-              })}
-              <polygon points={radarPoints} />
-            </svg>
+          <div className="result-world-track" aria-label="แผนที่ด่านความรัก">
+            {statRows.map((row, index) => (
+              <div
+                className="result-world-node"
+                key={row.key}
+                style={{ "--node-color": row.color } as CSSProperties}
+              >
+                <div className="result-node-flag">{index + 1}</div>
+                <div className="result-node-block">
+                  <span>{row.key}</span>
+                  <strong>{row.value}</strong>
+                </div>
+                <p>{row.title}</p>
+              </div>
+            ))}
           </div>
 
           <div className="share-stats result-stat-list" aria-label="สรุปวิธีรักของคุณ">
