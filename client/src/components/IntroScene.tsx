@@ -1,4 +1,5 @@
 import SoundToggle from "@/components/SoundToggle";
+import { withAssetVersion } from "@/lib/assets";
 
 interface IntroSceneProps {
   onNext: () => void;
@@ -12,9 +13,11 @@ export default function IntroScene({ onNext }: IntroSceneProps) {
 
         <div className="scene-image-frame story-image">
           <img
-            src="/images/intro.png"
+            src={withAssetVersion("/images/intro.png")}
             alt="รินกำลังเปิดประตูบ้าน"
             className="w-full h-auto"
+            loading="eager"
+            decoding="async"
           />
         </div>
 

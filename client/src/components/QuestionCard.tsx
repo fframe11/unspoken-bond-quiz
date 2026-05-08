@@ -1,5 +1,7 @@
 import { Question } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
+import { withAssetVersion } from "@/lib/assets";
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 
 interface QuestionCardProps {
@@ -36,6 +38,21 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   const sceneImage = sceneImages[questionNumber];
   const progressPercent = Math.round((questionNumber / totalQuestions) * 100);
+  const [imageRetry, setImageRetry] = useState(0);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageRetry(0);
+    setImageFailed(false);
+  }, [sceneImage]);
+
+  const handleSceneImageError = () => {
+    if (imageRetry < 2) {
+      setImageRetry((current) => current + 1);
+      return;
+    }
+    setImageFailed(true);
+  };
 
   return (
     <div className="quiz-page question-page">
@@ -49,20 +66,40 @@ export default function QuestionCard({
         >
           <div className="progress-glow" style={{ width: `${progressPercent}%` }} />
           <img
-            src="/images/loadprogress.png"
+            src={withAssetVersion("/images/loadprogress.png")}
             alt=""
             className="progress-cat"
             aria-hidden="true"
           />
         </div>
 
-        {sceneImage && (
+        {sceneImage && !imageFailed && (
           <div className="scene-image-frame">
             <img
-              src={sceneImage}
+              src={withAssetVersion(sceneImage, imageRetry)}
               alt={`ฉากที่ ${questionNumber}`}
               className="w-full h-auto"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              onError={handleSceneImageError}
             />
+          </div>
+        )}
+
+        {sceneImage && imageFailed && (
+          <div className="scene-image-frame scene-image-fallback">
+            <span>กำลังโหลดฉากใหม่</span>
+            <button
+              type="button"
+              className="btn-handdrawn"
+              onClick={() => {
+                setImageFailed(false);
+                setImageRetry((current) => current + 1);
+              }}
+            >
+              โหลดรูปอีกครั้ง
+            </button>
           </div>
         )}
 

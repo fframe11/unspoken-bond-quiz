@@ -1,5 +1,6 @@
 import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
+import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
 
 interface ResultCardProps {
@@ -312,7 +313,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       context.fill();
 
       if (pet.image) {
-        const catImage = await loadShareImage(pet.image);
+        const catImage = await loadShareImage(withAssetVersion(pet.image));
         const maxWidth = 760;
         const maxHeight = 610;
         const imageRatio = catImage.width / catImage.height;
@@ -453,7 +454,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         <div ref={shareRef} className="share-card">
           {pet.image && (
             <div className="share-hero">
-              <img src={pet.image} alt={`${pet.name} result`} />
+              <img src={withAssetVersion(pet.image)} alt={`${pet.name} result`} />
             </div>
           )}
 

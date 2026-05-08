@@ -1,4 +1,5 @@
 import SoundToggle from "@/components/SoundToggle";
+import { withAssetVersion } from "@/lib/assets";
 
 interface EntrySceneProps {
   onNext: () => void;
@@ -12,9 +13,11 @@ export default function EntryScene({ onNext }: EntrySceneProps) {
 
         <div className="scene-image-frame story-image">
           <img
-            src="/images/entry.png"
+            src={withAssetVersion("/images/entry.png")}
             alt="มุมมองของแมวที่กำลังมองริน"
             className="w-full h-auto"
+            loading="eager"
+            decoding="async"
           />
         </div>
 

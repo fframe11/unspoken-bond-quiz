@@ -1,6 +1,7 @@
 import { Sparkles, Compass, HeartHandshake, Share2 } from "lucide-react";
 import SoundToggle from "@/components/SoundToggle";
 import { useMusicPlayer } from "@/contexts/MusicContext";
+import { withAssetVersion } from "@/lib/assets";
 
 interface LandingPageProps {
   onNext: () => void;
@@ -33,9 +34,11 @@ export default function LandingPage({ onNext }: LandingPageProps) {
         </div>
 
         <img
-          src="/images/logo.png"
+          src={withAssetVersion("/images/logo.png")}
           alt="Unspoken Bond Quiz"
           className="landing-logo"
+          loading="eager"
+          decoding="async"
         />
 
         <div className="hero-copy">

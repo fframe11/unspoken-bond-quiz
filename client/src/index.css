@@ -800,6 +800,23 @@
     background: #eef8fc;
   }
 
+  .scene-image-fallback {
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+    gap: 12px;
+    padding: 22px;
+    color: #526071;
+    font-weight: 800;
+  }
+
+  .scene-image-fallback .btn-handdrawn {
+    width: min(100%, 220px);
+    margin: 0;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
   .story-image,
   .scene-image-frame {
     margin: 0;
