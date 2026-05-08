@@ -660,43 +660,25 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
         <section className="result-world-panel">
           <div className="result-map-header">
-            <span>Love Stage Route</span>
+            <span>สรุปพลังรักของคุณ</span>
             <strong>{auraColorName}</strong>
           </div>
 
-          <div className="result-world-track" aria-label="แผนที่ด่านความรัก">
+          <div className="result-world-track" aria-label="สรุปพลังรัก 4 ด้าน">
             {statRows.map((row, index) => (
               <div
                 className="result-world-node"
                 key={row.key}
                 style={{ "--node-color": row.color } as CSSProperties}
               >
-                <div className="result-node-flag">{index + 1}</div>
+                <div className="result-node-flag">LV.{index + 1}</div>
                 <div className="result-node-block">
-                  <span>{row.key}</span>
                   <strong>{row.value}</strong>
                 </div>
-                <p>{row.title}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="share-stats result-stat-list" aria-label="สรุปวิธีรักของคุณ">
-            {statRows.map((row) => (
-              <div className="share-stat" key={row.key}>
-                <div className="share-stat-label">
-                  <span>{row.title}</span>
-                  <strong>{row.value}</strong>
+                <div className="result-node-copy">
+                  <strong>{row.title}</strong>
+                  <p>{row.summary}</p>
                 </div>
-                <div className="share-stat-meter">
-                  <div
-                    style={{
-                      width: row.width,
-                      background: row.color,
-                    }}
-                  />
-                </div>
-                <p>{row.summary}</p>
               </div>
             ))}
           </div>

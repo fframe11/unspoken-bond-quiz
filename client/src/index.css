@@ -278,9 +278,9 @@
     border: 3px solid #ffffff;
     border-radius: 26px;
     background:
-      linear-gradient(180deg, rgba(255,255,255,0) 0 62%, rgba(67,176,42,0.18) 63% 100%),
-      linear-gradient(180deg, #eef8fc 0%, #ffffff 58%, #fff3c4 100%);
-    box-shadow: inset 0 -7px 0 rgba(67,176,42,0.12);
+      linear-gradient(180deg, rgba(255,255,255,0) 0 70%, rgba(255,216,77,0.16) 70% 100%),
+      #ffffff;
+    box-shadow: inset 0 -7px 0 rgba(255,216,77,0.22);
   }
 
   .result-cat-portrait img {
@@ -511,49 +511,49 @@
     padding: 14px;
     border: 2px solid #ffffff;
     border-radius: 24px;
-    background: #eef8fc;
+    background: #ffffff;
     box-shadow: 0 8px 0 #ffe08a, 0 16px 24px rgba(36,48,71,0.08);
     text-align: left;
   }
 
   .result-world-track {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin: 10px 0 12px;
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 12px;
   }
 
   .result-world-node {
     min-width: 0;
     display: grid;
-    grid-template-columns: 32px 58px 1fr;
+    grid-template-columns: 48px 54px 1fr;
     align-items: center;
     gap: 8px;
     position: relative;
     padding: 8px;
     border: 2px solid #ffffff;
     border-radius: 18px;
-    background: #ffffff;
+    background: #eef8fc;
     box-shadow: 0 5px 0 #c9edf9;
   }
 
   .result-node-flag {
-    min-width: 28px;
-    height: 24px;
+    min-width: 44px;
+    height: 30px;
     display: grid;
     place-items: center;
     border: 2px solid #ffffff;
     border-radius: 8px;
     background: #e60012;
     color: #ffffff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
     box-shadow: 0 4px 0 #a3000d;
   }
 
   .result-node-block {
-    width: 54px;
-    min-height: 54px;
+    width: 50px;
+    min-height: 50px;
     display: grid;
     place-items: center;
     padding: 7px;
@@ -570,20 +570,28 @@
     font-weight: 1000;
   }
 
-  .result-node-block span {
-    font-size: 15px;
-  }
-
   .result-node-block strong {
-    font-size: 18px;
+    font-size: 21px;
   }
 
-  .result-world-node p {
-    margin: 0;
+  .result-node-copy {
+    min-width: 0;
+  }
+
+  .result-node-copy strong {
+    display: block;
     color: #243047;
+    font-size: 13px;
+    font-weight: 1000;
+    line-height: 1.25;
+  }
+
+  .result-node-copy p {
+    margin: 0;
+    color: #526071;
     font-size: 11px;
-    font-weight: 900;
-    line-height: 1.28;
+    font-weight: 700;
+    line-height: 1.35;
     text-align: left;
   }
 
@@ -1776,11 +1784,11 @@
     }
 
     .result-node-block {
-      width: 52px;
-      min-height: 52px;
+      width: 48px;
+      min-height: 48px;
     }
 
-    .result-world-node p {
+    .result-node-copy p {
       font-size: 11px;
     }
 
