@@ -333,15 +333,15 @@
   }
 
   .result-rank-medal.mythic {
-    background: linear-gradient(135deg, #7b2cff, #e60012 58%, #ffbf2f);
+    background: linear-gradient(135deg, #5f2eea 0%, #b832ff 48%, #ffbf2f 100%);
+  }
+
+  .result-rank-medal.legend {
+    background: linear-gradient(135deg, #ffbf2f 0%, #ff7a00 54%, #e60012 100%);
   }
 
   .result-rank-medal.epic {
-    background: linear-gradient(135deg, #00a7e1, #7b2cff);
-  }
-
-  .result-rank-medal.elite {
-    background: linear-gradient(135deg, #43b02a, #00a7e1);
+    background: linear-gradient(135deg, #7b2cff 0%, #5f2eea 52%, #00a7e1 100%);
   }
 
   .result-name-lockup span {

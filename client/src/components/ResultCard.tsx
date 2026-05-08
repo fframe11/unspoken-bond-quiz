@@ -337,10 +337,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
   const tier =
     topTrait.value >= 6
-      ? { label: "ชัดมาก", sub: "รักแบบเห็นเป็นการกระทำ", tone: "mythic" }
+      ? { label: "MYTHIC", sub: "แรงค์สูงสุดของแมวสายรัก", tone: "mythic" }
       : topTrait.value >= 5
-        ? { label: "เด่น", sub: "คนใกล้ตัวสัมผัสได้ง่าย", tone: "epic" }
-        : { label: "ละมุน", sub: "รักเงียบ ๆ แต่มีน้ำหนัก", tone: "elite" };
+        ? { label: "LEGEND", sub: "ทีมไฟต์หัวใจไว้ใจได้", tone: "legend" }
+        : { label: "EPIC", sub: "พลังรักเริ่มชัดในทีม", tone: "epic" };
   const keywords = [
     topTrait.title,
     secondTrait.title,
