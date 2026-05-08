@@ -1,0 +1,20 @@
+{
+  "name": "Unspoken Bond Quiz",
+  "short_name": "Unspoken Bond",
+  "description": "ค้นหาวิธีรักของคุณผ่าน 10 ฉากในจักรวาลแมว",
+  "lang": "th",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f2",
+  "theme_color": "#e60012",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

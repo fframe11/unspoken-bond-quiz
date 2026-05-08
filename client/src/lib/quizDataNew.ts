@@ -417,8 +417,8 @@ export const catBreeds: Record<string, CatBreed> = {
       "ฉันมองคุณแบบนี้ไม่ใช่เพราะตัดสิน แต่เพราะรักคุณมากจึงต้องเข้าใจ ",
   },
   ISTJ: {
-    name: "แมวบริติช (ทำหน้าบูด)",
-    description: "ผู้ดีอังกฤษหน้าบูด",
+    name: "แมวทักซิโด้ (ทำหน้าบูด)",
+    description: "สุภาพบุรุษทักซิโด้หน้าบูด",
     auraColor: "#696969",
     loveLanguage: "Steadfast Loyalty (ความจงรักภักดี)",
     secretItem: "เก้าอี้เก่าที่คุ้นเคย",
@@ -516,8 +516,8 @@ export const catBreeds: Record<string, CatBreed> = {
       "ฉันทำขนมปังบนตัวคุณเพราะรักคุณ ให้คุณรู้สึกอบอุ่นและปลอดภัย ",
   },
   ESFJ: {
-    name: "แมวแร็กดอล (สายตาอ้อน)",
-    description: "เจ้าหญิงสายตาอ้อน",
+    name: "แมวสก๊อตติช โฟลด์ (สายตาอ้อน)",
+    description: "เจ้าหญิงหูพับสายตาอ้อน",
     auraColor: "#FF1493",
     loveLanguage: "Communication (การสื่อสารด้วยเสียง)",
     secretItem: "ของเล่นสีชมพู",

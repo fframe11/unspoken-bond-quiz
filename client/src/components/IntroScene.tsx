@@ -6,37 +6,30 @@ interface IntroSceneProps {
 
 export default function IntroScene({ onNext }: IntroSceneProps) {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-      style={{ backgroundColor: "#fdfbf7" }}
-    >
-      {/* Phone Frame Card */}
-      <div className="phone-screen relative">
-        {/* Sound Toggle */}
+    <div className="quiz-page">
+      <div className="phone-screen story-screen relative">
         <SoundToggle />
 
-        {/* Intro Image — Large, no title/cat emoticon */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ border: "3px solid #1a1a1a", margin: "0 -5px 15px" }}
-        >
+        <div className="scene-image-frame story-image">
           <img
             src="/images/intro.png"
-            alt="ริน กำลังเปิดประตูบ้าน"
+            alt="รินกำลังเปิดประตูบ้าน"
             className="w-full h-auto"
           />
         </div>
 
-        {/* Story Box */}
-        <div className="scene-box">
-          คุณตื่นขึ้นมาในร่างวิญญาณโปร่งแสง "ริน"
-          เจ้าของของคุณกลับมาบ้านพร้อมหมอกสีเทาแห่งความเศร้า...
-          คุณจะเยียวยาเธออย่างไร?
+        <div className="story-copy">
+          <h2>คืนหนึ่งที่ใจคุณเริ่มส่งเสียง</h2>
         </div>
 
-        {/* CTA Button */}
+        <div className="scene-box">
+          คุณตื่นขึ้นมาในร่างวิญญาณโปร่งแสงของแมวตัวหนึ่ง
+          และเห็นคนสำคัญกลับมาพร้อมความเหนื่อยล้าที่ซ่อนไว้ไม่มิด
+          คุณจะเข้าใกล้หัวใจของเธอด้วยวิธีไหน?
+        </div>
+
         <button className="btn-dark" onClick={onNext}>
-          แปลงร่างเป็นแมว
+          ก้าวเข้าสู่ร่างแมว
         </button>
       </div>
     </div>

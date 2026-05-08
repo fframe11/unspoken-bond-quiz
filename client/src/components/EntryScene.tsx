@@ -6,55 +6,31 @@ interface EntrySceneProps {
 
 export default function EntryScene({ onNext }: EntrySceneProps) {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-      style={{ backgroundColor: "#fdfbf7" }}
-    >
-      {/* Phone Frame Card */}
-      <div className="phone-screen relative">
-        {/* Sound Toggle */}
+    <div className="quiz-page">
+      <div className="phone-screen story-screen relative">
         <SoundToggle />
 
-        {/* Entry Image — New cartoon-style POV */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ border: "3px solid #1a1a1a", margin: "0 -5px 15px" }}
-        >
+        <div className="scene-image-frame story-image">
           <img
             src="/images/entry.png"
-            alt="มุมมองแมว มองเห็นรินเดินเข้าบ้าน"
+            alt="มุมมองของแมวที่กำลังมองริน"
             className="w-full h-auto"
           />
         </div>
 
-        {/* Title */}
-        <h3 style={{ fontSize: "20px", fontWeight: 700, margin: "10px 0" }}>
-          ประตูเปิดออก...
-        </h3>
-
-        {/* Story Box */}
-        <div className="scene-box">
-          คุณมองเห็นเธอจากมุมมองของตัวเอง — ตอนนี้
-          เรามาเข้าใจใจของเธอผ่านการตัดสินใจของคุณ
+        <div className="story-copy">
+          <h2>ทุกการเลือกจะทิ้งสีไว้ในตัวคุณ</h2>
         </div>
 
-        {/* CTA Button */}
-        <button className="btn-dark" onClick={onNext}>
-          เริ่มการทดสอบ
-        </button>
+        <div className="scene-box">
+          ตอบให้เหมือนเป็นคุณจริง ๆ ในวินาทีนั้น
+          บางคำตอบอาจดูนุ่มนวล บางคำตอบอาจกล้ากว่าใจคิด
+          แต่ทั้งหมดคือเบาะแสของตัวตนที่กำลังจะปรากฏ
+        </div>
 
-        {/* Hint */}
-        <p
-          style={{
-            fontSize: "12px",
-            fontStyle: "italic",
-            color: "#555",
-            marginTop: "15px",
-            textAlign: "center",
-          }}
-        >
-          "ทุกการตัดสินใจของคุณจะเปิดเผยว่าคุณเป็นสัตว์เลี้ยงแบบไหน"
-        </p>
+        <button className="btn-dark" onClick={onNext}>
+          เริ่มตอบคำถาม
+        </button>
       </div>
     </div>
   );
