@@ -346,6 +346,32 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     secondTrait.title,
     getReadableLoveLanguage(pet.loveLanguage),
   ];
+  const compactInsightCopy: Record<
+    string,
+    { feel: string; gift: string; tip: string }
+  > = {
+    E: {
+      feel: "ไม่ปล่อยให้ใครเหงา",
+      gift: "กล้าเข้าหาก่อน",
+      tip: "ฟังให้จบก่อนช่วย",
+    },
+    S: {
+      feel: "เรื่องเล็ก ๆ ถูกเห็น",
+      gift: "จำรายละเอียดเก่ง",
+      tip: "บอกใจตัวเองบ้าง",
+    },
+    T: {
+      feel: "ปัญหาดูชัดขึ้น",
+      gift: "ช่วยจัดความคิด",
+      tip: "นุ่มก่อนแก้ปัญหา",
+    },
+    J: {
+      feel: "อยู่ด้วยแล้วมั่นคง",
+      gift: "ทำให้ใจปลอดภัย",
+      tip: "ยืดหยุ่นอีกนิด",
+    },
+  };
+  const compactInsights = compactInsightCopy[topTrait.key] || compactInsightCopy.E;
   const allTypes = [
     "ESTJ",
     "ENTJ",
@@ -598,21 +624,21 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
             <div className="result-simple-insights" aria-label="สรุปผลลัพธ์หลัก">
               <article>
-                <span>คนอื่นสัมผัสได้ว่า</span>
-                <strong>{profile.peopleFeel}</strong>
+                <span>ฟีลที่ให้</span>
+                <strong>{compactInsights.feel}</strong>
               </article>
               <article>
-                <span>พลังรักที่เด่น</span>
-                <strong>{topTrait.summary}</strong>
+                <span>จุดเด่น</span>
+                <strong>{compactInsights.gift}</strong>
               </article>
               <article>
-                <span>ถ้าอยากให้ชัดขึ้น</span>
-                <strong>{profile.blindSpot}</strong>
+                <span>ทริคเล็ก ๆ</span>
+                <strong>{compactInsights.tip}</strong>
               </article>
             </div>
 
             <div className="result-party">
-              <h3>แก๊งแมวที่พลังใกล้คุณ</h3>
+              <h3>แมวตัวอื่นที่เข้ากับคุณ</h3>
               <div className="result-gang-row">
                 {gangCats.map((cat) => (
                   <div className="result-gang-card" key={cat?.mbti}>
