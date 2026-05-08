@@ -575,7 +575,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             <span>ผลลัพธ์แบบทดสอบ</span>
             <strong>Unspoken Bond</strong>
           </div>
-          <h1 className="result-main-title">แมวตัวนี้คือวิธีที่คุณรักคนอื่น</h1>
+          <h1 className="result-main-title">ฉันเป็นแมว ?</h1>
 
           <div className="result-cat-portrait">
             {pet.image && (
