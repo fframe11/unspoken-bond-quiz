@@ -167,12 +167,15 @@ function wrapCanvasText(
   text: string,
   maxWidth: number
 ) {
-  const words = text.split(" ");
+  const words = text.includes(" ")
+    ? text.split(/(\s+)/).filter((part) => part.trim())
+    : Array.from(text);
   const lines: string[] = [];
   let line = "";
 
   words.forEach((word) => {
-    const nextLine = line ? `${line} ${word}` : word;
+    const hasSpace = text.includes(" ");
+    const nextLine = line ? `${line}${hasSpace ? " " : ""}${word}` : word;
     if (context.measureText(nextLine).width > maxWidth && line) {
       lines.push(line);
       line = word;
@@ -183,6 +186,56 @@ function wrapCanvasText(
 
   if (line) lines.push(line);
   return lines;
+}
+
+function drawRoundedRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - safeRadius,
+    y + height
+  );
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement) {
+  return new Promise<Blob>((resolve, reject) => {
+    if (canvas.toBlob) {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Unable to create image blob"));
+        }
+      }, "image/png");
+      return;
+    }
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const binary = atob(dataUrl.split(",")[1] || "");
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    resolve(new Blob([bytes], { type: "image/png" }));
+  });
 }
 
 async function loadShareImage(src: string) {
@@ -232,7 +285,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     setSharing(true);
 
     try {
-      await document.fonts.ready;
+      await document.fonts?.ready;
 
       const canvas = document.createElement("canvas");
       canvas.width = 1080;
@@ -255,8 +308,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       context.fillRect(0, 0, canvas.width, 920);
 
       context.fillStyle = "#e60012";
-      context.beginPath();
-      context.roundRect(78, 78, 924, 22, 999);
+      drawRoundedRect(context, 78, 96, 924, 22, 999);
       context.fill();
 
       if (pet.image) {
@@ -268,7 +320,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
         const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
         const drawX = (canvas.width - drawWidth) / 2;
-        const drawY = 165 + (maxHeight - drawHeight) / 2;
+        const drawY = 178 + (maxHeight - drawHeight) / 2;
 
         context.save();
         context.shadowColor = "rgba(36,48,71,0.14)";
@@ -279,51 +331,49 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       }
 
       context.fillStyle = brandRed;
-      context.beginPath();
-      context.roundRect(426, 780, 228, 78, 999);
+      drawRoundedRect(context, 426, 804, 228, 78, 999);
       context.fill();
       context.fillStyle = "#ffffff";
       context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
       context.textAlign = "center";
-      context.fillText(pet.mbti, 540, 831);
+      context.fillText(pet.mbti, 540, 855);
 
       context.fillStyle = ink;
       context.font = "800 66px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(pet.name, 540, 945);
+      context.fillText(pet.name, 540, 970);
 
       context.fillStyle = muted;
       context.font = "700 34px 'IBM Plex Sans Thai', sans-serif";
       wrapCanvasText(context, profile.headline, 820)
         .slice(0, 2)
         .forEach((line, index) => {
-          context.fillText(line, 540, 1002 + index * 44);
+          context.fillText(line, 540, 1026 + index * 44);
         });
 
       context.fillStyle = "#ffffff";
       context.shadowColor = "rgba(36,48,71,0.12)";
       context.shadowBlur = 18;
       context.shadowOffsetY = 10;
-      context.beginPath();
-      context.roundRect(90, 1110, 900, 248, 34);
+      drawRoundedRect(context, 90, 1132, 900, 250, 34);
       context.fill();
       context.shadowColor = "transparent";
 
       context.textAlign = "left";
       context.fillStyle = muted;
       context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("จุดที่คนรอบตัวสัมผัสได้", 140, 1170);
+      context.fillText("จุดที่คนรอบตัวสัมผัสได้", 140, 1192);
       context.fillStyle = brandRed;
       context.font = "800 46px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(topTrait.title, 140, 1230);
+      context.fillText(topTrait.title, 140, 1252);
       context.fillStyle = "#3a4658";
       context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
       wrapCanvasText(context, profile.insight, 800)
         .slice(0, 3)
         .forEach((line, index) => {
-          context.fillText(line, 140, 1285 + index * 40);
+          context.fillText(line, 140, 1308 + index * 40);
         });
 
-      let statY = 1440;
+      let statY = 1458;
       statRows.forEach((row) => {
         context.fillStyle = ink;
         context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
@@ -332,12 +382,11 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         context.fillText(String(row.value), 970, statY);
         context.textAlign = "left";
         context.fillStyle = "#edf2f5";
-        context.beginPath();
-        context.roundRect(110, statY + 18, 860, 22, 999);
+        drawRoundedRect(context, 110, statY + 18, 860, 22, 999);
         context.fill();
         context.fillStyle = row.color;
-        context.beginPath();
-        context.roundRect(
+        drawRoundedRect(
+          context,
           110,
           statY + 18,
           Math.max(130, (860 * row.value) / maxScore),
@@ -349,52 +398,48 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       });
 
       context.fillStyle = "#ffffff";
-      context.beginPath();
-      context.roundRect(90, 1750, 900, 104, 28);
+      drawRoundedRect(context, 90, 1760, 900, 104, 28);
       context.fill();
       context.fillStyle = muted;
       context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("จำไว้สั้น ๆ", 136, 1792);
+      context.fillText("จำไว้สั้น ๆ", 136, 1802);
       context.fillStyle = ink;
       context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
       wrapCanvasText(context, profile.careTip, 760)
         .slice(0, 2)
         .forEach((line, index) => {
-          context.fillText(line, 136, 1834 + index * 34);
+          context.fillText(line, 136, 1844 + index * 34);
         });
 
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
+      const blob = await canvasToBlob(canvas);
+
+      const file = new File([blob], "unspoken-bond-result.png", {
+        type: "image/png",
+      });
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: "Unspoken Bond Quiz",
+            text: `ฉันคือ ${pet.name} (${pet.mbti}) - ${profile.headline}`,
+            files: [file],
+          });
           setSharing(false);
           return;
+        } catch {
+          /* fallback below */
         }
+      }
 
-        const file = new File([blob], "unspoken-bond-result.png", {
-          type: "image/png",
-        });
-
-        if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          try {
-            await navigator.share({
-              title: "Unspoken Bond Quiz",
-              text: `ฉันคือ ${pet.name} (${pet.mbti}) - ${profile.headline}`,
-              files: [file],
-            });
-            setSharing(false);
-            return;
-          } catch {
-            /* fallback below */
-          }
-        }
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "unspoken-bond-result.png";
-        a.click();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "unspoken-bond-result.png";
+      a.click();
+      window.setTimeout(() => {
         URL.revokeObjectURL(url);
-        setSharing(false);
-      }, "image/png");
+      }, 1000);
+      setSharing(false);
     } catch {
       setSharing(false);
     }
