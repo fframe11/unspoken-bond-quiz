@@ -1,4 +1,5 @@
 import SoundToggle from "@/components/SoundToggle";
+import type { CSSProperties } from "react";
 
 interface CutsceneDisplayProps {
   image: string;
@@ -24,60 +25,37 @@ export default function CutsceneDisplay({
   );
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-8"
-      style={{ backgroundColor: "#fdfbf7" }}
-    >
-      {/* Phone Frame Card */}
-      <div className="phone-screen relative animate-fadeIn">
-        {/* Sound Toggle */}
+    <div className="quiz-page">
+      <div className="phone-screen cutscene-screen relative animate-fadeIn">
         <SoundToggle />
 
-        {/* Cat Paws */}
-        <div style={{ textAlign: "center", margin: "10px -20px" }}>
+        <div className="cutscene-art">
+          <img src={image} alt="ช่วงเปลี่ยนฉาก" />
+        </div>
+
+        <div className="scene-box cutscene-message">{message}</div>
+
+        <div
+          className="progress-container progress-with-cat"
+          style={{ "--progress": `${progressPercent}%` } as CSSProperties}
+        >
+          <div className="progress-fill" style={{ width: `${progressPercent}%` }} />
           <img
-            src={image}
-            alt="Cat paws"
-            style={{ width: "100%", height: "auto" }}
+            src="/images/loadprogress.png"
+            alt=""
+            className="progress-cat"
+            aria-hidden="true"
           />
+          <span>{progressPercent}%</span>
         </div>
 
-        {/* Transition Story Box */}
-        <div className="scene-box" style={{ backgroundColor: "#e6f9ff" }}>
-          {message}
-        </div>
-
-        {/* Progress Bar — game loading style */}
-        <div className="progress-container" style={{ position: "relative" }}>
-          <div
-            className="progress-fill"
-            style={{ width: `${progressPercent}%` }}
-          />
-          <span
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              fontSize: "13px",
-              fontWeight: 700,
-              color: "#1a1a1a",
-              textShadow: "0 0 3px rgba(255,255,255,0.8)",
-              pointerEvents: "none",
-            }}
-          >
-            {progressPercent}%
-          </span>
-        </div>
-
-        {/* CTA Button */}
         {isLastQuestion ? (
-          <button className="btn-dark" onClick={onViewResult}>
-            ดูผลลัพธ์
+          <button className="btn-dark btn-pulse" onClick={onViewResult}>
+            เปิดผลลัพธ์
           </button>
         ) : (
           <button className="btn-handdrawn" onClick={onNext}>
-            ไปต่อ
+            ไปตอนต่อไป
           </button>
         )}
       </div>

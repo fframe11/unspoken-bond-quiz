@@ -174,13 +174,7 @@
   }
 
   .phone-screen::before {
-    content: "";
-    position: absolute;
-    inset: 14px 18px auto;
-    height: 12px;
-    background: linear-gradient(180deg, #ff4f5e 0%, #e60012 100%);
-    opacity: 0.9;
-    border-radius: 999px;
+    display: none;
   }
 
   .landing-screen,
@@ -338,6 +332,153 @@
 
   .result-screen .btn-handdrawn {
     margin-bottom: 0;
+  }
+
+  .share-card {
+    width: min(100%, 390px);
+    aspect-ratio: 4 / 5;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 3px solid #ffffff;
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow: 0 10px 0 #c9edf9, 0 18px 30px rgba(36,48,71,0.1);
+  }
+
+  .share-hero {
+    height: 44%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 12px 14px 0;
+    background: linear-gradient(135deg, #fff3c4, #eef8fc);
+  }
+
+  .share-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    display: block;
+  }
+
+  .share-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 20px 16px;
+    text-align: center;
+  }
+
+  .share-badge {
+    align-self: center;
+    min-width: 74px;
+    padding: 6px 16px;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #ff4f5e 0%, #e60012 100%);
+    box-shadow: 0 5px 0 #a3000d;
+    color: #ffffff;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .share-body h3 {
+    margin: 4px 0 0;
+    font-size: 26px;
+    line-height: 1.15;
+  }
+
+  .share-tagline {
+    margin: 0;
+    color: #526071;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .share-insight {
+    padding: 10px 12px;
+    border-radius: 18px;
+    background: #f7f7f2;
+    text-align: left;
+  }
+
+  .share-insight span,
+  .share-meta-grid span {
+    display: block;
+    margin-bottom: 2px;
+    color: #697386;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .share-insight strong {
+    display: block;
+    color: #e60012;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+
+  .share-insight p {
+    margin: 4px 0 0;
+    color: #3a4658;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .share-stats {
+    display: grid;
+    gap: 6px;
+  }
+
+  .share-stat-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 3px;
+    color: #243047;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .share-stat-meter {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #edf2f5;
+  }
+
+  .share-stat-meter div {
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  .share-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .share-meta-grid div {
+    min-width: 0;
+    padding: 8px 9px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 5px 0 #e6edf2;
+    text-align: left;
+  }
+
+  .share-meta-grid strong {
+    display: block;
+    color: #243047;
+    font-size: 11px;
+    line-height: 1.35;
   }
 
   .checkpoint-screen {
@@ -546,7 +687,7 @@
     background-color: #ffffff;
     border: 2px solid #ffffff;
     border-radius: 999px;
-    margin: 0;
+    margin: 18px 0 0;
     overflow: hidden;
     position: relative;
   }
@@ -565,15 +706,18 @@
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
-    color: #243047;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
   }
 
   .progress-track {
-    height: 6px;
+    height: 12px;
     background: #ffffff;
     border: 2px solid #ffffff;
     border-radius: 999px;
     overflow: hidden;
+    position: relative;
+    box-shadow: 0 5px 0 #c9edf9, 0 12px 20px rgba(36,48,71,0.08);
   }
 
   .progress-glow {
@@ -581,6 +725,25 @@
     background: linear-gradient(180deg, #ff4f5e 0%, #e60012 100%);
     border-radius: 999px;
     transition: width 0.45s ease;
+  }
+
+  .progress-with-cat {
+    --progress: 0%;
+    overflow: visible;
+  }
+
+  .progress-cat {
+    position: absolute;
+    left: clamp(18px, var(--progress), calc(100% - 18px));
+    top: 50%;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    pointer-events: none;
+    transform: translate(-50%, -58%);
+    filter: drop-shadow(0 5px 6px rgba(36,48,71,0.18));
+    transition: left 0.5s ease-in-out;
+    z-index: 2;
   }
 
   .question-topbar,

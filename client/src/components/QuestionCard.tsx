@@ -1,5 +1,6 @@
 import { Question } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
+import type { CSSProperties } from "react";
 
 interface QuestionCardProps {
   question: Question;
@@ -9,9 +10,8 @@ interface QuestionCardProps {
   totalQuestions?: number;
 }
 
-const optionLabels = ["ก.", "ข.", "ค.", "ง."];
+const optionLabels = ["A", "B", "C", "D"];
 
-// Scene images — add more as user provides them
 const sceneImages: Record<number, string> = {
   1: "/images/scene/scene1.png",
   2: "/images/scene/scene2.png",
@@ -33,49 +33,49 @@ export default function QuestionCard({
   totalQuestions = 10,
 }: QuestionCardProps) {
   const sceneImage = sceneImages[questionNumber];
+  const progressPercent = Math.round((questionNumber / totalQuestions) * 100);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8" style={{ backgroundColor: "#fdfbf7" }}>
-      {/* Phone Frame Card */}
-      <div className="phone-screen relative animate-fadeIn">
-        {/* Sound Toggle */}
+    <div className="quiz-page question-page">
+      <div className="phone-screen question-screen relative animate-fadeIn">
         <SoundToggle />
 
-        {/* Scene Title */}
-        <h3 style={{ fontSize: "18px", fontWeight: 700, margin: "0 0 5px" }}>
-          Scene {questionNumber}
-        </h3>
+        <div
+          className="progress-track progress-with-cat"
+          aria-label={`ความคืบหน้า ${progressPercent}%`}
+          style={{ "--progress": `${progressPercent}%` } as CSSProperties}
+        >
+          <div className="progress-glow" style={{ width: `${progressPercent}%` }} />
+          <img
+            src="/images/loadprogress.png"
+            alt=""
+            className="progress-cat"
+            aria-hidden="true"
+          />
+        </div>
 
-        {/* Scene Image (if available for this scene) */}
         {sceneImage && (
-          <div className="rounded-xl overflow-hidden" style={{ border: "3px solid #1a1a1a", margin: "10px -5px 15px" }}>
+          <div className="scene-image-frame">
             <img
               src={sceneImage}
-              alt={`Scene ${questionNumber}`}
+              alt={`ฉากที่ ${questionNumber}`}
               className="w-full h-auto"
             />
           </div>
         )}
 
-        {/* Question Box */}
-        <div className="scene-box">
-          {question.text}
-        </div>
+        <div className="scene-box question-box">{question.text}</div>
 
-        {/* Answer Options */}
-        <div>
+        <div className="answer-list">
           {question.options.map((option, index) => (
             <button
               key={index}
               onClick={() => onSelectAnswer(index)}
               disabled={isAnswered}
-              className="btn-handdrawn"
-              style={{
-                opacity: isAnswered ? 0.5 : 1,
-                cursor: isAnswered ? "not-allowed" : "pointer",
-              }}
+              className="btn-handdrawn answer-option"
             >
-              {optionLabels[index]} {option.text}
+              <span className="answer-label">{optionLabels[index]}</span>
+              <span>{option.text}</span>
             </button>
           ))}
         </div>
