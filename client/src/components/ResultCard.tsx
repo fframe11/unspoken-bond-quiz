@@ -598,7 +598,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
         <section ref={shareRef} className="result-collect-card" aria-label="การ์ดผลลัพธ์">
           <div className="result-stage-top">
-            <span>ผลลัพธ์แบบทดสอบ</span>
+            <span>การ์ดผลลัพธ์ของคุณ</span>
             <strong>Unspoken Bond</strong>
           </div>
           <h1 className="result-main-title">ฉันเป็นแมว ?</h1>
