@@ -10,7 +10,9 @@ interface ResultCardProps {
 
 type ResultProfile = {
   headline: string;
+  hook: string;
   insight: string;
+  peopleFeel: string;
   blindSpot: string;
   careTip: string;
 };
@@ -18,97 +20,129 @@ type ResultProfile = {
 const resultProfiles: Record<string, ResultProfile> = {
   ESTJ: {
     headline: "รักแบบจัดระบบให้ทุกอย่างปลอดภัย",
+    hook: "คุณไม่ได้ชอบควบคุม คุณแค่ไม่อยากให้คนสำคัญต้องรับมือทุกอย่างคนเดียว",
     insight: "คุณแสดงความรักด้วยการลงมือจัดการ ทำให้คนรอบตัวรู้สึกว่ามีคนคอยประคองสถานการณ์",
+    peopleFeel: "อยู่ใกล้คุณแล้วเหมือนมีคนช่วยถือแผนที่ในวันที่ใจวุ่น",
     blindSpot: "บางครั้งความหวังดีอาจดูเหมือนคำสั่ง ลองถามก่อนว่าเขาอยากให้ช่วยแบบไหน",
     careTip: "คำว่า 'เดี๋ยวฉันจัดให้' คือภาษารักของคุณ",
   },
   ENTJ: {
     headline: "รักแบบพาไปข้างหน้า",
+    hook: "คุณรักด้วยการเห็นศักยภาพ แม้วันที่อีกฝ่ายยังไม่เห็นมันในตัวเอง",
     insight: "คุณมองเห็นศักยภาพของคนสำคัญ และมักดันให้เขาไปถึงจุดที่ดีกว่าเดิม",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าอนาคตยังมีทางไปต่อ",
     blindSpot: "อย่าลืมว่าบางวันเขาไม่ได้ต้องการแผน เขาแค่อยากมีคนอยู่ข้าง ๆ",
     careTip: "ลดโหมดหัวหน้าลงนิดหนึ่ง แล้วความอบอุ่นจะชัดขึ้นมาก",
   },
   INTJ: {
     headline: "รักแบบเงียบ แต่คิดเผื่อไกลมาก",
+    hook: "คุณอาจไม่พูดบ่อย แต่ในหัวคุณมีแผนสำรองให้คนที่รักเสมอ",
     insight: "คุณดูเหมือนไม่แสดงออก แต่จริง ๆ กำลังวางแผนให้คนสำคัญเจ็บน้อยที่สุด",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่ามีใครสักคนคิดเผื่ออย่างลึกมาก",
     blindSpot: "ความเงียบของคุณอาจถูกอ่านว่าไม่แคร์ ลองพูดสิ่งที่คิดออกมาบ้าง",
     careTip: "แค่บอกว่า 'ฉันคิดเรื่องนี้ไว้ให้แล้ว' ก็ทำให้อีกฝ่ายอุ่นใจ",
   },
   ISTJ: {
     headline: "รักแบบสม่ำเสมอจนกลายเป็นที่พักใจ",
+    hook: "ความรักของคุณไม่ค่อยหวือหวา แต่มันกลับมาอยู่ตรงเดิมให้พึ่งได้เสมอ",
     insight: "คุณทำให้ความสัมพันธ์มั่นคงผ่านรายละเอียดเล็ก ๆ ที่ไม่เคยลืม",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าบางอย่างในชีวิตยังวางใจได้",
     blindSpot: "อย่ายึดว่าทุกอย่างต้องถูกวิธี บางครั้งความรักต้องการความยืดหยุ่น",
     careTip: "ความตรงเวลาของคุณอาจเป็นความโรแมนติกแบบหนึ่ง",
   },
   ESFP: {
     headline: "รักแบบทำให้ห้องสว่างขึ้นทันที",
+    hook: "คุณไม่ได้แค่ทำให้คนหัวเราะ คุณทำให้ความหนักในใจเบาลง",
     insight: "คุณดึงคนออกจากความหนักด้วยเสียงหัวเราะ การเล่น และพลังที่จริงใจ",
+    peopleFeel: "อยู่ใกล้คุณแล้วความเศร้าดูไม่ใหญ่เท่าเดิม",
     blindSpot: "อย่ารีบทำให้ทุกอย่างสนุกจนข้ามความเศร้าของอีกฝ่าย",
     careTip: "อยู่กับเขาในความเงียบได้บ้าง แล้วพลังของคุณจะยิ่งนุ่มขึ้น",
   },
   ENFP: {
     headline: "รักแบบปลุกชีวิตให้กลับมามีสี",
+    hook: "คุณคือคนที่ชวนหัวใจคนอื่นกลับมาเชื่อว่าโลกยังมีมุมใหม่",
     insight: "คุณชวนคนสำคัญมองความเป็นไปได้ใหม่ ๆ แม้ในวันที่เขาเห็นแค่ทางตัน",
+    peopleFeel: "อยู่ใกล้คุณแล้วเหมือนได้หน้าต่างบานใหม่ในวันที่อึดอัด",
     blindSpot: "ไอเดียเยอะเป็นเสน่ห์ แต่อีกฝ่ายอาจต้องการคำตอบง่าย ๆ ก่อน",
     careTip: "เลือกหนึ่งอย่างที่ทำได้จริง แล้วเดินไปพร้อมเขา",
   },
   ISFP: {
     headline: "รักแบบนุ่ม เงียบ และจริงมาก",
+    hook: "คุณไม่ต้องดังเพื่อให้ใครรู้สึกถูกรัก แค่การอยู่ของคุณก็มีน้ำหนัก",
     insight: "คุณดูแลคนด้วยสัมผัสเล็ก ๆ บรรยากาศดี ๆ และการอยู่ข้าง ๆ แบบไม่กดดัน",
+    peopleFeel: "อยู่ใกล้คุณแล้วเหมือนได้พักจากโลกที่เร่งเกินไป",
     blindSpot: "ถ้าเก็บความรู้สึกไว้หมด อีกฝ่ายอาจไม่รู้ว่าคุณต้องการอะไร",
     careTip: "พูดความรู้สึกสั้น ๆ แต่ตรง จะทำให้ความรักของคุณชัดขึ้น",
   },
   INFP: {
     headline: "รักแบบเข้าใจหัวใจส่วนลึก",
+    hook: "คุณมองเห็นความรู้สึกที่ยังไม่มีคำอธิบาย และนั่นทำให้คนรู้สึกไม่โดดเดี่ยว",
     insight: "คุณมองเห็นความรู้สึกที่คนอื่นมองข้าม และทำให้เขารู้สึกว่าถูกเข้าใจจริง ๆ",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าความเปราะบางของตัวเองไม่ผิด",
     blindSpot: "อย่าแบกอารมณ์ของทุกคนไว้คนเดียว คุณก็ต้องมีพื้นที่หายใจ",
     careTip: "ขอบเขตที่ดีไม่ได้ทำให้รักน้อยลง แต่มันทำให้รักได้นานขึ้น",
   },
   INFJ: {
     headline: "รักแบบอ่านใจได้ก่อนเขาพูด",
+    hook: "คุณได้ยินเสียงเงียบ ๆ ของคนอื่นเร็วมาก จนบางทีเขายังตกใจ",
     insight: "คุณจับสัญญาณเล็ก ๆ ได้ไว และมักรู้ว่าใครกำลังไม่ไหวแม้เขาจะยิ้มอยู่",
+    peopleFeel: "อยู่ใกล้คุณแล้วเหมือนมีคนเห็นตัวตนหลังรอยยิ้ม",
     blindSpot: "อย่าคาดหวังว่าทุกคนจะอ่านใจคุณได้เท่าที่คุณอ่านใจเขา",
     careTip: "บอกความต้องการของตัวเองให้ชัด คือการดูแลความสัมพันธ์เหมือนกัน",
   },
   ENFJ: {
     headline: "รักแบบโอบทั้งห้องไว้ด้วยกัน",
+    hook: "คุณทำให้คนรู้สึกว่าตัวเองยังมีที่ยืน แม้ในวันที่เขาไม่มั่นใจ",
     insight: "คุณทำให้คนรู้สึกมีค่า และรู้ว่าตัวเองไม่ได้ถูกทิ้งไว้ข้างหลัง",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่ามีใครคอยดึงกลับมาอย่างอ่อนโยน",
     blindSpot: "ระวังดูแลทุกคนจนลืมถามตัวเองว่าไหวไหม",
     careTip: "คนที่รักคุณก็อยากดูแลคุณกลับเหมือนกัน",
   },
   ESFJ: {
     headline: "รักแบบจำได้ทุกเรื่องที่สำคัญ",
+    hook: "คุณทำให้ความรักจับต้องได้ผ่านรายละเอียดเล็ก ๆ ที่คนอื่นอาจลืม",
     insight: "คุณแสดงความรักด้วยการดูแลรายละเอียด ทำให้คนใกล้ตัวรู้สึกถูกรักอย่างเป็นรูปธรรม",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าเรื่องเล็ก ๆ ของเขามีความหมาย",
     blindSpot: "ถ้าอีกฝ่ายไม่ตอบแทนแบบเดียวกัน ไม่ได้แปลว่าเขาไม่รัก",
     careTip: "บอกสิ่งที่คุณอยากได้รับตรง ๆ จะช่วยลดการน้อยใจเงียบ",
   },
   ISFJ: {
     headline: "รักแบบอยู่ตรงนั้นเสมอ",
+    hook: "คุณรักแบบไม่เรียกร้องเสียงปรบมือ แต่คนที่ได้รับจะจำความอุ่นนั้นได้นาน",
     insight: "คุณเป็นพื้นที่ปลอดภัยของคนอื่นผ่านความใส่ใจที่สม่ำเสมอและไม่เรียกร้อง",
+    peopleFeel: "อยู่ใกล้คุณแล้วเหมือนมีที่พักใจที่ไม่ต้องอธิบายเยอะ",
     blindSpot: "อย่าทำดีจนตัวเองเหนื่อยแล้วบอกว่าไม่เป็นไร",
     careTip: "การขอให้คนอื่นช่วยบ้าง ไม่ได้ทำให้คุณเป็นภาระ",
   },
   ENTP: {
     headline: "รักแบบทำให้ทุกวันไม่น่าเบื่อ",
+    hook: "คุณรักด้วยการเปิดประตูใหม่ ๆ ให้คนหลุดจากกรอบเดิมของตัวเอง",
     insight: "คุณพาความสัมพันธ์ออกจากกรอบเดิม ๆ ด้วยมุก ไอเดีย และการชวนคิด",
+    peopleFeel: "อยู่ใกล้คุณแล้วเรื่องหนัก ๆ อาจกลายเป็นบทสนทนาที่หายใจได้",
     blindSpot: "บางเรื่องไม่ต้องชนะด้วยเหตุผล แค่ฟังให้จบก็พอ",
     careTip: "เก็บพลังโต้กลับไว้ แล้วใช้ความฉลาดของคุณปลอบคนตรงหน้า",
   },
   INTP: {
     headline: "รักแบบเงียบ ๆ แต่สังเกตตลอด",
+    hook: "คุณอาจไม่หวาน แต่คุณจำ pattern ของคนสำคัญแม่นกว่าที่เขาคิด",
     insight: "คุณอาจไม่พูดหวาน แต่คุณจำ pattern ของคนสำคัญและพยายามเข้าใจเขาจริง ๆ",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่ามีใครกำลังพยายามเข้าใจอย่างจริงจัง",
     blindSpot: "อย่าวิเคราะห์ความรู้สึกจนลืมรู้สึกไปกับเขา",
     careTip: "ประโยคง่าย ๆ อย่าง 'ฉันอยู่ตรงนี้นะ' มีพลังมากกว่าที่คิด",
   },
   ESTP: {
     headline: "รักแบบลงมือทันที ไม่ปล่อยให้จม",
+    hook: "คุณไม่ปล่อยให้คนสำคัญจมอยู่กับความหนัก ถ้าช่วยได้คุณจะขยับก่อน",
     insight: "คุณพาคนออกจากความเครียดด้วยการขยับ ทำ เล่น แก้ และอยู่กับสถานการณ์จริง",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าปัญหามีทางออกที่จับต้องได้",
     blindSpot: "ไม่ใช่ทุกปัญหาต้องรีบแก้ บางปัญหาต้องถูกฟังก่อน",
     careTip: "ถามว่า 'อยากให้ช่วย หรืออยากให้ฟัง' แล้วคุณจะน่ารักขึ้นมาก",
   },
   ISTP: {
     headline: "รักแบบซ่อมสิ่งที่พังโดยไม่พูดเยอะ",
+    hook: "คุณรักผ่านการทำให้ชีวิตอีกฝ่ายเบาขึ้น แม้ไม่ได้ประกาศว่าทำเพื่อเขา",
     insight: "คุณแสดงความรักด้วยการแก้ปัญหาเล็ก ๆ ให้ชีวิตอีกฝ่ายเบาขึ้น",
+    peopleFeel: "อยู่ใกล้คุณแล้วรู้สึกว่าความยุ่งยากค่อย ๆ ถูกคลี่ออก",
     blindSpot: "ความนิ่งของคุณอาจดูเหมือนไม่รู้สึก ทั้งที่จริง ๆ รู้สึกมาก",
     careTip: "พูดความห่วงใยให้ได้ยินบ้าง แม้จะสั้นก็พอ",
   },
@@ -140,6 +174,13 @@ const auraCopy: Record<
   },
 };
 
+const traitShareCopy: Record<string, string> = {
+  E: "คุณเป็นฝ่ายเดินเข้าไปหา ทำให้คนรอบตัวรู้สึกว่าเขาไม่ได้อยู่ลำพัง",
+  S: "คุณรักผ่านรายละเอียดเล็ก ๆ ที่คนอื่นอาจมองข้าม",
+  T: "คุณช่วยทำให้เรื่องที่ยุ่งกลับมาชัดและจัดการได้",
+  J: "คุณสร้างจังหวะที่ทำให้ความสัมพันธ์รู้สึกมั่นคงขึ้น",
+};
+
 const colorNames: Record<string, string> = {
   "#FF6B9D": "ชมพูคอรัล",
   "#FFB6C1": "ชมพูอ่อน",
@@ -161,6 +202,14 @@ const colorNames: Record<string, string> = {
 function getReadableLoveLanguage(value: string) {
   const match = value.match(/\((.*?)\)/);
   return match?.[1] || value;
+}
+
+function getRelationshipMap(
+  topTrait: { key: string; title: string },
+  secondTrait: { key: string; title: string },
+  petName: string
+) {
+  return `${petName} เด่นที่ "${topTrait.title}" และมี "${secondTrait.title}" คอยเสริม แปลว่าคุณไม่ได้แค่รักแบบเดียว แต่ปรับวิธีดูแลคนตามสถานการณ์ได้ดี`;
 }
 
 function wrapCanvasText(
@@ -281,6 +330,8 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     ...auraCopy[key],
   }));
   const topTrait = [...statRows].sort((a, b) => b.value - a.value)[0];
+  const secondTrait = [...statRows].sort((a, b) => b.value - a.value)[1] || topTrait;
+  const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
 
   const handleShare = async () => {
     setSharing(true);
@@ -301,12 +352,12 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       context.fillStyle = "#f7f7f2";
       context.fillRect(0, 0, canvas.width, canvas.height);
 
-      const gradient = context.createLinearGradient(0, 0, canvas.width, 860);
+      const gradient = context.createLinearGradient(0, 0, canvas.width, 980);
       gradient.addColorStop(0, "#fff3c4");
       gradient.addColorStop(0.55, "#ffffff");
       gradient.addColorStop(1, "#eef8fc");
       context.fillStyle = gradient;
-      context.fillRect(0, 0, canvas.width, 920);
+      context.fillRect(0, 0, canvas.width, 990);
 
       context.fillStyle = "#e60012";
       drawRoundedRect(context, 78, 96, 924, 22, 999);
@@ -314,14 +365,14 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
       if (pet.image) {
         const catImage = await loadShareImage(withAssetVersion(pet.image));
-        const maxWidth = 760;
-        const maxHeight = 610;
+        const maxWidth = 820;
+        const maxHeight = 660;
         const imageRatio = catImage.width / catImage.height;
         const boxRatio = maxWidth / maxHeight;
         const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
         const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
         const drawX = (canvas.width - drawWidth) / 2;
-        const drawY = 178 + (maxHeight - drawHeight) / 2;
+        const drawY = 150 + (maxHeight - drawHeight) / 2;
 
         context.save();
         context.shadowColor = "rgba(36,48,71,0.14)";
@@ -332,49 +383,53 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       }
 
       context.fillStyle = brandRed;
-      drawRoundedRect(context, 426, 804, 228, 78, 999);
+      drawRoundedRect(context, 426, 820, 228, 78, 999);
       context.fill();
       context.fillStyle = "#ffffff";
       context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
       context.textAlign = "center";
-      context.fillText(pet.mbti, 540, 855);
+      context.fillText(pet.mbti, 540, 871);
 
       context.fillStyle = ink;
-      context.font = "800 66px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(pet.name, 540, 970);
-
-      context.fillStyle = muted;
-      context.font = "700 34px 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, profile.headline, 820)
+      context.font = "800 62px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+      wrapCanvasText(context, pet.name, 900)
         .slice(0, 2)
         .forEach((line, index) => {
-          context.fillText(line, 540, 1026 + index * 44);
+          context.fillText(line, 540, 986 + index * 68);
+        });
+
+      context.fillStyle = brandRed;
+      context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+      wrapCanvasText(context, profile.headline, 840)
+        .slice(0, 2)
+        .forEach((line, index) => {
+          context.fillText(line, 540, 1108 + index * 45);
         });
 
       context.fillStyle = "#ffffff";
       context.shadowColor = "rgba(36,48,71,0.12)";
       context.shadowBlur = 18;
       context.shadowOffsetY = 10;
-      drawRoundedRect(context, 90, 1132, 900, 250, 34);
+      drawRoundedRect(context, 90, 1228, 900, 258, 34);
       context.fill();
       context.shadowColor = "transparent";
 
       context.textAlign = "left";
       context.fillStyle = muted;
       context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("จุดที่คนรอบตัวสัมผัสได้", 140, 1192);
+      context.fillText("อ่านแล้วเข้าใจตัวเองใน 5 วิ", 140, 1288);
       context.fillStyle = brandRed;
-      context.font = "800 46px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(topTrait.title, 140, 1252);
+      context.font = "800 42px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+      context.fillText(topTrait.title, 140, 1348);
       context.fillStyle = "#3a4658";
       context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, profile.insight, 800)
+      wrapCanvasText(context, traitShareCopy[topTrait.key] || profile.hook, 800)
         .slice(0, 3)
         .forEach((line, index) => {
-          context.fillText(line, 140, 1308 + index * 40);
+          context.fillText(line, 140, 1402 + index * 40);
         });
 
-      let statY = 1458;
+      let statY = 1538;
       statRows.forEach((row) => {
         context.fillStyle = ink;
         context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
@@ -395,22 +450,19 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           999
         );
         context.fill();
-        statY += 88;
+        statY += 74;
       });
 
       context.fillStyle = "#ffffff";
-      drawRoundedRect(context, 90, 1760, 900, 104, 28);
+      drawRoundedRect(context, 90, 1780, 900, 88, 28);
       context.fill();
-      context.fillStyle = muted;
-      context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("จำไว้สั้น ๆ", 136, 1802);
-      context.fillStyle = ink;
+      context.fillStyle = brandRed;
       context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, profile.careTip, 760)
-        .slice(0, 2)
-        .forEach((line, index) => {
-          context.fillText(line, 136, 1844 + index * 34);
-        });
+      context.fillText("อยากรู้ว่าคุณเป็นแมวแบบไหน?", 136, 1828);
+      context.textAlign = "right";
+      context.fillStyle = ink;
+      context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
+      context.fillText("unspoken-bond-quiz.vercel.app", 944, 1828);
 
       const blob = await canvasToBlob(canvas);
 
@@ -451,65 +503,67 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       <div className="phone-screen result-screen relative animate-fadeIn">
         <SoundToggle />
 
-        <div ref={shareRef} className="share-card">
-          {pet.image && (
-            <div className="share-hero">
+        <div ref={shareRef} className="result-payoff">
+          <div className="result-kicker">ผลลัพธ์ของคุณ</div>
+          <div className="result-cat-stage">
+            {pet.image && (
               <img src={withAssetVersion(pet.image)} alt={`${pet.name} result`} />
-            </div>
-          )}
+            )}
+          </div>
 
-          <div className="share-body">
-            <div className="share-badge">{pet.mbti}</div>
-            <h3>{pet.name}</h3>
-            <p className="share-tagline">{profile.headline}</p>
-
-            <div className="share-insight">
-              <span>จุดที่คนรอบตัวสัมผัสได้</span>
-              <strong>{topTrait.title}</strong>
-              <p>{profile.insight}</p>
-            </div>
-
-            <div className="share-stats" aria-label="สรุปวิธีรักของคุณ">
-              {statRows.map((row) => (
-                <div className="share-stat" key={row.key}>
-                  <div className="share-stat-label">
-                    <span>{row.title}</span>
-                    <strong>{row.value}</strong>
-                  </div>
-                  <div className="share-stat-meter">
-                    <div
-                      style={{
-                        width: row.width,
-                        background: row.color,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="share-meta-grid">
-              <div>
-                <span>ภาษารัก</span>
-                <strong>{getReadableLoveLanguage(pet.loveLanguage)}</strong>
-              </div>
-              <div>
-                <span>จำไว้สั้น ๆ</span>
-                <strong>{profile.careTip}</strong>
-              </div>
-            </div>
+          <div className="result-title-card">
+            <span>{pet.mbti}</span>
+            <h2>{pet.name}</h2>
+            <strong>{profile.headline}</strong>
+            <p>{profile.hook}</p>
           </div>
         </div>
 
-        <div className="scene-box result-compact-box result-analysis result-story">
-          <strong>อ่านตัวเองต่ออีกนิด</strong>
-          <p>{profile.insight}</p>
-          <p>
-            <b>Blind spot:</b> {profile.blindSpot}
-          </p>
-          <p>
-            <b>สีออร่า:</b> {auraColorName}
-          </p>
+        <div className="result-insight-grid">
+          <div className="result-insight-card primary">
+            <span>คนรอบตัวจะรู้สึกว่า</span>
+            <strong>{profile.peopleFeel}</strong>
+          </div>
+          <div className="result-insight-card">
+            <span>แผนที่วิธีรัก</span>
+            <strong>{relationshipMap}</strong>
+          </div>
+          <div className="result-insight-card">
+            <span>จุดที่ควรรู้ตัว</span>
+            <strong>{profile.blindSpot}</strong>
+          </div>
+        </div>
+
+        <div className="result-map-panel">
+          <div className="result-map-header">
+            <span>Love Aura Map</span>
+            <strong>{auraColorName}</strong>
+          </div>
+
+          <div className="share-stats" aria-label="สรุปวิธีรักของคุณ">
+            {statRows.map((row) => (
+              <div className="share-stat" key={row.key}>
+                <div className="share-stat-label">
+                  <span>{row.title}</span>
+                  <strong>{row.value}</strong>
+                </div>
+                <div className="share-stat-meter">
+                  <div
+                    style={{
+                      width: row.width,
+                      background: row.color,
+                    }}
+                  />
+                </div>
+                <p>{row.summary}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="result-share-hook">
+          <span>การ์ดนี้ออกแบบมาให้แชร์แล้วคนอ่านเข้าใจทันที</span>
+          <strong>{profile.careTip}</strong>
         </div>
 
         <button
