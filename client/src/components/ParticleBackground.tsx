@@ -27,11 +27,10 @@ export default function ParticleBackground() {
     let animId: number;
     const pieces: ConfettiPiece[] = [];
     const colors = [
-      "239,68,68",
-      "56,189,248",
-      "52,211,153",
-      "251,191,36",
-      "244,114,182",
+      "230,0,18",
+      "0,167,225",
+      "255,216,77",
+      "67,176,42",
     ];
 
     const resize = () => {

@@ -16,10 +16,10 @@ const auraLabels: Record<string, string> = {
 };
 
 const auraColors: Record<string, string> = {
-  E: "#e879f9",
-  S: "#67e8f9",
-  T: "#7c5ce0",
-  J: "#fbbf24",
+  E: "#e60012",
+  S: "#00a7e1",
+  T: "#43b02a",
+  J: "#ffd84d",
 };
 
 const colorNames: Record<string, string> = {
@@ -68,7 +68,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
     try {
       const canvas = await html2canvas(shareRef.current, {
-        backgroundColor: "#fff8ec",
+        backgroundColor: "#f7f7f2",
         scale: 2,
         useCORS: true,
         logging: false,
@@ -115,18 +115,18 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         <div
           ref={shareRef}
           style={{
-            background: "#fff8ec",
+            background: "#ffffff",
             border: "3px solid #ffffff",
             borderRadius: "28px",
             padding: "0",
             overflow: "hidden",
-            boxShadow: "0 10px 0 #d7edf8",
+            boxShadow: "0 10px 0 #c9edf9",
           }}
         >
           {/* Hero image — full width bleed */}
           {pet.image && (
             <div style={{
-              background: "linear-gradient(135deg, #fff1c7, #dff8f1)",
+              background: "linear-gradient(135deg, #fff3c4, #eef8fc)",
               padding: "16px 0 8px",
               textAlign: "center",
             }}>
@@ -144,14 +144,14 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               display: "inline-flex",
               padding: "5px 14px",
               borderRadius: "999px",
-              background: "#ef4444",
+              background: "#e60012",
               border: "2px solid #ffffff",
               fontSize: "13px",
               fontWeight: 700,
               color: "#ffffff",
               fontFamily: "'IBM Plex Sans Thai', sans-serif",
               marginBottom: "8px",
-              boxShadow: "0 5px 0 #b91c1c",
+              boxShadow: "0 5px 0 #a3000d",
             }}>
               {pet.mbti}
             </div>
@@ -235,10 +235,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             <div style={{
               padding: "10px 12px",
               borderRadius: "16px",
-              background: "#fff2f5",
+              background: "#ffffff",
               border: "2px solid #ffffff",
               fontFamily: "'IBM Plex Sans Thai', sans-serif",
-              boxShadow: "0 5px 0 #ffd1df",
+              boxShadow: "0 5px 0 #ffd7dc",
             }}>
               <div style={{ fontSize: "10px", fontWeight: 700, color: "#697386", marginBottom: "3px", textTransform: "uppercase" as const, letterSpacing: 0 }}>Love Language</div>
               <div style={{ fontSize: "12px", fontWeight: 600, color: "#243047" }}>{pet.loveLanguage}</div>
@@ -246,10 +246,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             <div style={{
               padding: "10px 12px",
               borderRadius: "16px",
-              background: "#eaf8ff",
+              background: "#ffffff",
               border: "2px solid #ffffff",
               fontFamily: "'IBM Plex Sans Thai', sans-serif",
-              boxShadow: "0 5px 0 #c4e8fa",
+              boxShadow: "0 5px 0 #c9edf9",
             }}>
               <div style={{ fontSize: "10px", fontWeight: 700, color: "#697386", marginBottom: "3px", textTransform: "uppercase" as const, letterSpacing: 0 }}>สีออร่า</div>
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
