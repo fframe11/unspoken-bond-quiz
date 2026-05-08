@@ -610,6 +610,20 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
                 <strong>{profile.blindSpot}</strong>
               </article>
             </div>
+
+            <div className="result-party">
+              <h3>แก๊งแมวที่พลังใกล้คุณ</h3>
+              <div className="result-gang-row">
+                {gangCats.map((cat) => (
+                  <div className="result-gang-card" key={cat?.mbti}>
+                    {cat?.image && (
+                      <img src={withAssetVersion(cat.image)} alt="" aria-hidden="true" />
+                    )}
+                    <span>{cat?.mbti}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -664,20 +678,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             ))}
           </div>
         </section>
-
-        <div className="result-party result-party-secondary">
-          <h3>ผลลัพธ์ใกล้เคียงที่อาจเจอในเพื่อน</h3>
-          <div className="result-gang-row">
-            {gangCats.map((cat) => (
-              <div className="result-gang-card" key={cat?.mbti}>
-                {cat?.image && (
-                  <img src={withAssetVersion(cat.image)} alt="" aria-hidden="true" />
-                )}
-                <span>{cat?.mbti}</span>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div className="result-insight-grid">
           <div className="result-insight-card">
