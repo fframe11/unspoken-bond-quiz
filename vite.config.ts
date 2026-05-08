@@ -240,6 +240,16 @@ export default defineConfig({
       ? path.resolve(import.meta.dirname, "dist") 
       : path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          motion: ["framer-motion"],
+          capture: ["html2canvas-pro"],
+          icons: ["lucide-react"],
+        },
+      },
+    },
   },
   server: {
     port: 3000,
