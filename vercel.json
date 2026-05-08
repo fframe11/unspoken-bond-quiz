@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "dist/public",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
