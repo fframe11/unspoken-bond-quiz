@@ -8,7 +8,6 @@ interface CutsceneDisplayProps {
   message: string;
   onNext: () => void;
   isLastQuestion: boolean;
-  onViewResult: () => void;
   currentQuestion?: number;
   totalQuestions?: number;
 }
@@ -18,7 +17,6 @@ export default function CutsceneDisplay({
   message,
   onNext,
   isLastQuestion,
-  onViewResult,
   currentQuestion = 0,
   totalQuestions = 10,
 }: CutsceneDisplayProps) {
@@ -90,8 +88,8 @@ export default function CutsceneDisplay({
         </div>
 
         {isLastQuestion ? (
-          <button className="btn-dark btn-pulse" onClick={onViewResult}>
-            เปิดผลลัพธ์
+          <button className="btn-dark btn-pulse" onClick={onNext}>
+            ไปที่ประตูเกิดใหม่
           </button>
         ) : (
           <button className="btn-handdrawn" onClick={onNext}>

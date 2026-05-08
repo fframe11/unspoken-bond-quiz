@@ -163,7 +163,6 @@ export default function Quiz() {
             message={questions[currentQuestion].checkpoint || ""}
             onNext={handleCutsceneNext}
             isLastQuestion={currentQuestion === questions.length - 1}
-            onViewResult={handleViewResult}
             currentQuestion={currentQuestion}
             totalQuestions={questions.length}
           />
@@ -172,17 +171,22 @@ export default function Quiz() {
         {state === "checkpoint" && (
           <div className="quiz-page">
             <div className="phone-screen checkpoint-screen animate-fadeIn">
-              <div className="cat-doodle" style={{ animation: "float 2s infinite" }}>
+              <div className="final-gate-badge">Progress 10/10</div>
+              <div className="cat-doodle final-gate-icon" style={{ animation: "float 2s infinite" }}>
                 ✦
               </div>
-              <h2>ร่างแมวของคุณกำลังจะปรากฏ</h2>
-              <div className="scene-box">
-                ทุกคำตอบกำลังรวมตัวเป็นภาพเดียว เดินไปที่กระจกเงา
-                แล้วดูว่าความรักแบบเงียบ ๆ ของคุณกลายเป็นแมวตัวไหน
+              <h2>พร้อมไปเกิดเป็นแมวหรือยัง?</h2>
+              <div className="scene-box final-gate-copy">
+                ประตูสุดท้ายเปิดแล้ว คำตอบทั้งหมดกำลังรวมร่างเป็นแมวประจำใจของคุณ เลือกความพร้อมแล้วไปดูว่าคุณจะเกิดใหม่เป็นแมวสายไหน
               </div>
-              <button className="btn-dark btn-pulse" onClick={handleViewResult}>
-                ดูผลลัพธ์
-              </button>
+              <div className="final-choice-list">
+                <button className="btn-dark btn-pulse" onClick={handleViewResult}>
+                  พร้อม
+                </button>
+                <button className="btn-handdrawn" onClick={handleViewResult}>
+                  พร้อมมาก
+                </button>
+              </div>
             </div>
           </div>
         )}

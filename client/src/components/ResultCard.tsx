@@ -334,6 +334,61 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const topTrait = [...statRows].sort((a, b) => b.value - a.value)[0];
   const secondTrait = [...statRows].sort((a, b) => b.value - a.value)[1] || topTrait;
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
+  const tier =
+    topTrait.value >= 6
+      ? { label: "Legendary", tone: "gold" }
+      : topTrait.value >= 5
+        ? { label: "Rare", tone: "blue" }
+        : { label: "Common", tone: "green" };
+  const keywords = [
+    topTrait.title,
+    secondTrait.title,
+    getReadableLoveLanguage(pet.loveLanguage),
+  ];
+  const allTypes = [
+    "ESTJ",
+    "ENTJ",
+    "INTJ",
+    "ISTJ",
+    "ESFP",
+    "ENFP",
+    "ISFP",
+    "INFP",
+    "ENTP",
+    "INTP",
+    "ESTP",
+    "ISTP",
+    "ESFJ",
+    "ENFJ",
+    "INFJ",
+    "ISFJ",
+  ];
+  const gangCats = allTypes
+    .filter((type) => type !== pet.mbti)
+    .sort((left, right) => {
+      const leftMatch = Array.from(left).filter(
+        (letter, index) => letter === pet.mbti[index]
+      ).length;
+      const rightMatch = Array.from(right).filter(
+        (letter, index) => letter === pet.mbti[index]
+      ).length;
+      return rightMatch - leftMatch;
+    })
+    .slice(0, 4)
+    .map((type) => getResultCat(type))
+    .filter(Boolean);
+  const radarSize = 220;
+  const radarCenter = radarSize / 2;
+  const radarRadius = 74;
+  const radarPoints = statRows
+    .map((row, index) => {
+      const angle = -Math.PI / 2 + (Math.PI * 2 * index) / statRows.length;
+      const strength = Math.max(0.18, row.value / maxScore);
+      const x = radarCenter + Math.cos(angle) * radarRadius * strength;
+      const y = radarCenter + Math.sin(angle) * radarRadius * strength;
+      return `${x},${y}`;
+    })
+    .join(" ");
 
   const createResultImageBlob = async () => {
     await document.fonts?.ready;
@@ -526,44 +581,107 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       <div className="phone-screen result-screen relative animate-fadeIn">
         <SoundToggle />
 
-        <div ref={shareRef} className="result-payoff">
-          <div className="result-kicker">ผลลัพธ์ของคุณ</div>
-          <div className="result-cat-stage">
+        <section ref={shareRef} className="result-collect-card" aria-label="การ์ดผลลัพธ์">
+          <div className="result-brand-line">unspoken-bond/cats</div>
+          <h1 className="result-main-title">เกิดใหม่เป็นแมว</h1>
+
+          <div className="result-cat-portrait">
             {pet.image && (
               <img src={withAssetVersion(pet.image)} alt={`${pet.name} result`} />
             )}
           </div>
 
-          <div className="result-title-card">
+          <div className="result-name-lockup">
             <span>{pet.mbti}</span>
             <h2>{pet.name}</h2>
-            <strong>{profile.headline}</strong>
-            <p>{profile.hook}</p>
+            <p>{profile.headline}</p>
           </div>
+
+          <div className="result-detail-card">
+            <p className="result-summary">{profile.hook}</p>
+
+            <div className="result-keyword-row" aria-label="คีย์เวิร์ดผลลัพธ์">
+              {keywords.map((keyword) => (
+                <span key={keyword}>{keyword}</span>
+              ))}
+            </div>
+
+            <div className="result-tier-line">
+              <span className={`result-tier-pill ${tier.tone}`}>{tier.label}</span>
+              <strong>“{profile.careTip}”</strong>
+            </div>
+
+            <div className="result-gang">
+              <h3>แก๊งแมวใกล้เคียง</h3>
+              <div className="result-gang-row">
+                {gangCats.map((cat) => (
+                  <div className="result-gang-card" key={cat?.mbti}>
+                    {cat?.image && (
+                      <img src={withAssetVersion(cat.image)} alt="" aria-hidden="true" />
+                    )}
+                    <span>{cat?.mbti}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="result-actions">
+          <button
+            className="btn-dark"
+            onClick={handleShare}
+            disabled={sharing || saving}
+          >
+            {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
+          </button>
+          <button
+            className="btn-handdrawn"
+            onClick={handleSave}
+            disabled={sharing || saving}
+          >
+            {saving ? "กำลังบันทึกรูป..." : "Download Image"}
+          </button>
+          <button className="btn-handdrawn" onClick={onRetake}>
+            เล่นใหม่
+          </button>
         </div>
 
-        <div className="result-insight-grid">
-          <div className="result-insight-card primary">
-            <span>คนรอบตัวจะรู้สึกว่า</span>
-            <strong>{profile.peopleFeel}</strong>
+        {shareHint && (
+          <div className="result-forward-prompt" role="status">
+            ส่งให้เพื่อนเล่นต่อ แล้วดูว่าเขาเป็นแมวที่รักคนแบบไหน
           </div>
-          <div className="result-insight-card">
-            <span>แผนที่วิธีรัก</span>
-            <strong>{relationshipMap}</strong>
-          </div>
-          <div className="result-insight-card">
-            <span>จุดที่ควรรู้ตัว</span>
-            <strong>{profile.blindSpot}</strong>
-          </div>
-        </div>
+        )}
 
-        <div className="result-map-panel">
+        <section className="result-radar-panel">
           <div className="result-map-header">
-            <span>Love Aura Map</span>
+            <span>Love Aura Radar</span>
             <strong>{auraColorName}</strong>
           </div>
 
-          <div className="share-stats" aria-label="สรุปวิธีรักของคุณ">
+          <div className="result-radar-wrap">
+            <svg viewBox={`0 0 ${radarSize} ${radarSize}`} role="img" aria-label="แผนที่ออร่าความรัก">
+              <circle cx={radarCenter} cy={radarCenter} r="74" />
+              <circle cx={radarCenter} cy={radarCenter} r="50" />
+              <circle cx={radarCenter} cy={radarCenter} r="26" />
+              {statRows.map((row, index) => {
+                const angle = -Math.PI / 2 + (Math.PI * 2 * index) / statRows.length;
+                const x = radarCenter + Math.cos(angle) * 86;
+                const y = radarCenter + Math.sin(angle) * 86;
+                return (
+                  <g key={row.key}>
+                    <line x1={radarCenter} y1={radarCenter} x2={x} y2={y} />
+                    <text x={x} y={y} textAnchor="middle" dominantBaseline="middle">
+                      {row.key}
+                    </text>
+                  </g>
+                );
+              })}
+              <polygon points={radarPoints} />
+            </svg>
+          </div>
+
+          <div className="share-stats result-stat-list" aria-label="สรุปวิธีรักของคุณ">
             {statRows.map((row) => (
               <div className="share-stat" key={row.key}>
                 <div className="share-stat-label">
@@ -582,37 +700,22 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="result-share-hook">
-          <span>การ์ดนี้ออกแบบมาให้แชร์แล้วคนอ่านเข้าใจทันที</span>
-          <strong>{profile.careTip}</strong>
-        </div>
-
-        {shareHint && (
-          <div className="result-forward-prompt" role="status">
-            ส่งให้เพื่อนเล่นต่อ แล้วดูว่าเขาเป็นแมวที่รักคนแบบไหน
+        <div className="result-insight-grid">
+          <div className="result-insight-card primary">
+            <span>คนรอบตัวจะรู้สึกว่า</span>
+            <strong>{profile.peopleFeel}</strong>
           </div>
-        )}
-
-        <button
-          className="btn-dark"
-          onClick={handleShare}
-          disabled={sharing || saving}
-          style={{ marginTop: "8px" }}
-        >
-          {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
-        </button>
-        <button
-          className="btn-handdrawn"
-          onClick={handleSave}
-          disabled={sharing || saving}
-        >
-          {saving ? "กำลังบันทึกรูป..." : "บันทึกรูปไว้แชร์เอง"}
-        </button>
-        <button className="btn-handdrawn" onClick={onRetake}>
-          เล่นอีกครั้ง
-        </button>
+          <div className="result-insight-card">
+            <span>แผนที่วิธีรัก</span>
+            <strong>{relationshipMap}</strong>
+          </div>
+          <div className="result-insight-card">
+            <span>จุดที่ควรรู้ตัว</span>
+            <strong>{profile.blindSpot}</strong>
+          </div>
+        </div>
       </div>
     </div>
   );
