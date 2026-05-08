@@ -303,6 +303,8 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const pet = getResultCat(mbtiType);
   const shareRef = useRef<HTMLDivElement>(null);
   const [sharing, setSharing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [shareHint, setShareHint] = useState(false);
 
   if (!pet) {
     return (
@@ -333,139 +335,153 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const secondTrait = [...statRows].sort((a, b) => b.value - a.value)[1] || topTrait;
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
 
+  const createResultImageBlob = async () => {
+    await document.fonts?.ready;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Unable to create share canvas");
+
+    const brandRed = "#e60012";
+    const ink = "#243047";
+    const muted = "#697386";
+
+    context.fillStyle = "#f7f7f2";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 980);
+    gradient.addColorStop(0, "#fff3c4");
+    gradient.addColorStop(0.55, "#ffffff");
+    gradient.addColorStop(1, "#eef8fc");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, 990);
+
+    context.fillStyle = "#e60012";
+    drawRoundedRect(context, 78, 96, 924, 22, 999);
+    context.fill();
+
+    if (pet.image) {
+      const catImage = await loadShareImage(withAssetVersion(pet.image));
+      const maxWidth = 820;
+      const maxHeight = 660;
+      const imageRatio = catImage.width / catImage.height;
+      const boxRatio = maxWidth / maxHeight;
+      const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
+      const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
+      const drawX = (canvas.width - drawWidth) / 2;
+      const drawY = 150 + (maxHeight - drawHeight) / 2;
+
+      context.save();
+      context.shadowColor = "rgba(36,48,71,0.14)";
+      context.shadowBlur = 28;
+      context.shadowOffsetY = 18;
+      context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
+      context.restore();
+    }
+
+    context.fillStyle = brandRed;
+    drawRoundedRect(context, 426, 820, 228, 78, 999);
+    context.fill();
+    context.fillStyle = "#ffffff";
+    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+    context.textAlign = "center";
+    context.fillText(pet.mbti, 540, 871);
+
+    context.fillStyle = ink;
+    context.font = "800 62px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, pet.name, 900)
+      .slice(0, 2)
+      .forEach((line, index) => {
+        context.fillText(line, 540, 986 + index * 68);
+      });
+
+    context.fillStyle = brandRed;
+    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, profile.headline, 840)
+      .slice(0, 2)
+      .forEach((line, index) => {
+        context.fillText(line, 540, 1108 + index * 45);
+      });
+
+    context.fillStyle = "#ffffff";
+    context.shadowColor = "rgba(36,48,71,0.12)";
+    context.shadowBlur = 18;
+    context.shadowOffsetY = 10;
+    drawRoundedRect(context, 90, 1228, 900, 258, 34);
+    context.fill();
+    context.shadowColor = "transparent";
+
+    context.textAlign = "left";
+    context.fillStyle = muted;
+    context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
+    context.fillText("อ่านแล้วเข้าใจตัวเองใน 5 วิ", 140, 1288);
+    context.fillStyle = brandRed;
+    context.font = "800 42px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+    context.fillText(topTrait.title, 140, 1348);
+    context.fillStyle = "#3a4658";
+    context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, traitShareCopy[topTrait.key] || profile.hook, 800)
+      .slice(0, 3)
+      .forEach((line, index) => {
+        context.fillText(line, 140, 1402 + index * 40);
+      });
+
+    let statY = 1538;
+    statRows.forEach((row) => {
+      context.fillStyle = ink;
+      context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+      context.fillText(row.title, 110, statY);
+      context.textAlign = "right";
+      context.fillText(String(row.value), 970, statY);
+      context.textAlign = "left";
+      context.fillStyle = "#edf2f5";
+      drawRoundedRect(context, 110, statY + 18, 860, 22, 999);
+      context.fill();
+      context.fillStyle = row.color;
+      drawRoundedRect(
+        context,
+        110,
+        statY + 18,
+        Math.max(130, (860 * row.value) / maxScore),
+        22,
+        999
+      );
+      context.fill();
+      statY += 74;
+    });
+
+    context.fillStyle = "#ffffff";
+    drawRoundedRect(context, 90, 1780, 900, 88, 28);
+    context.fill();
+    context.fillStyle = brandRed;
+    context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+    context.fillText("อยากรู้ว่าคุณเป็นแมวแบบไหน?", 136, 1828);
+    context.textAlign = "right";
+    context.fillStyle = ink;
+    context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
+    context.fillText("unspoken-bond-quiz.vercel.app", 944, 1828);
+
+    return canvasToBlob(canvas);
+  };
+
+  const downloadBlob = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "unspoken-bond-result.png";
+    a.click();
+    window.setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 1000);
+  };
+
   const handleShare = async () => {
     setSharing(true);
 
     try {
-      await document.fonts?.ready;
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 1080;
-      canvas.height = 1920;
-      const context = canvas.getContext("2d");
-      if (!context) throw new Error("Unable to create share canvas");
-
-      const brandRed = "#e60012";
-      const ink = "#243047";
-      const muted = "#697386";
-
-      context.fillStyle = "#f7f7f2";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-
-      const gradient = context.createLinearGradient(0, 0, canvas.width, 980);
-      gradient.addColorStop(0, "#fff3c4");
-      gradient.addColorStop(0.55, "#ffffff");
-      gradient.addColorStop(1, "#eef8fc");
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, canvas.width, 990);
-
-      context.fillStyle = "#e60012";
-      drawRoundedRect(context, 78, 96, 924, 22, 999);
-      context.fill();
-
-      if (pet.image) {
-        const catImage = await loadShareImage(withAssetVersion(pet.image));
-        const maxWidth = 820;
-        const maxHeight = 660;
-        const imageRatio = catImage.width / catImage.height;
-        const boxRatio = maxWidth / maxHeight;
-        const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
-        const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
-        const drawX = (canvas.width - drawWidth) / 2;
-        const drawY = 150 + (maxHeight - drawHeight) / 2;
-
-        context.save();
-        context.shadowColor = "rgba(36,48,71,0.14)";
-        context.shadowBlur = 28;
-        context.shadowOffsetY = 18;
-        context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
-        context.restore();
-      }
-
-      context.fillStyle = brandRed;
-      drawRoundedRect(context, 426, 820, 228, 78, 999);
-      context.fill();
-      context.fillStyle = "#ffffff";
-      context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
-      context.textAlign = "center";
-      context.fillText(pet.mbti, 540, 871);
-
-      context.fillStyle = ink;
-      context.font = "800 62px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, pet.name, 900)
-        .slice(0, 2)
-        .forEach((line, index) => {
-          context.fillText(line, 540, 986 + index * 68);
-        });
-
-      context.fillStyle = brandRed;
-      context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, profile.headline, 840)
-        .slice(0, 2)
-        .forEach((line, index) => {
-          context.fillText(line, 540, 1108 + index * 45);
-        });
-
-      context.fillStyle = "#ffffff";
-      context.shadowColor = "rgba(36,48,71,0.12)";
-      context.shadowBlur = 18;
-      context.shadowOffsetY = 10;
-      drawRoundedRect(context, 90, 1228, 900, 258, 34);
-      context.fill();
-      context.shadowColor = "transparent";
-
-      context.textAlign = "left";
-      context.fillStyle = muted;
-      context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("อ่านแล้วเข้าใจตัวเองใน 5 วิ", 140, 1288);
-      context.fillStyle = brandRed;
-      context.font = "800 42px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(topTrait.title, 140, 1348);
-      context.fillStyle = "#3a4658";
-      context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
-      wrapCanvasText(context, traitShareCopy[topTrait.key] || profile.hook, 800)
-        .slice(0, 3)
-        .forEach((line, index) => {
-          context.fillText(line, 140, 1402 + index * 40);
-        });
-
-      let statY = 1538;
-      statRows.forEach((row) => {
-        context.fillStyle = ink;
-        context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-        context.fillText(row.title, 110, statY);
-        context.textAlign = "right";
-        context.fillText(String(row.value), 970, statY);
-        context.textAlign = "left";
-        context.fillStyle = "#edf2f5";
-        drawRoundedRect(context, 110, statY + 18, 860, 22, 999);
-        context.fill();
-        context.fillStyle = row.color;
-        drawRoundedRect(
-          context,
-          110,
-          statY + 18,
-          Math.max(130, (860 * row.value) / maxScore),
-          22,
-          999
-        );
-        context.fill();
-        statY += 74;
-      });
-
-      context.fillStyle = "#ffffff";
-      drawRoundedRect(context, 90, 1780, 900, 88, 28);
-      context.fill();
-      context.fillStyle = brandRed;
-      context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("อยากรู้ว่าคุณเป็นแมวแบบไหน?", 136, 1828);
-      context.textAlign = "right";
-      context.fillStyle = ink;
-      context.font = "800 25px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText("unspoken-bond-quiz.vercel.app", 944, 1828);
-
-      const blob = await canvasToBlob(canvas);
-
+      const blob = await createResultImageBlob();
       const file = new File([blob], "unspoken-bond-result.png", {
         type: "image/png",
       });
@@ -474,9 +490,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         try {
           await navigator.share({
             title: "Unspoken Bond Quiz",
-            text: `ฉันคือ ${pet.name} (${pet.mbti}) - ${profile.headline}`,
+            text: `แมวตัวนี้คือวิธีที่ฉันรักคนอื่น: ${pet.name} (${pet.mbti})`,
             files: [file],
           });
+          setShareHint(true);
           setSharing(false);
           return;
         } catch {
@@ -484,17 +501,23 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         }
       }
 
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "unspoken-bond-result.png";
-      a.click();
-      window.setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 1000);
+      downloadBlob(blob);
+      setShareHint(true);
       setSharing(false);
     } catch {
       setSharing(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+
+    try {
+      const blob = await createResultImageBlob();
+      downloadBlob(blob);
+      setShareHint(true);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -566,13 +589,26 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           <strong>{profile.careTip}</strong>
         </div>
 
+        {shareHint && (
+          <div className="result-forward-prompt" role="status">
+            ส่งให้เพื่อนเล่นต่อ แล้วดูว่าเขาเป็นแมวที่รักคนแบบไหน
+          </div>
+        )}
+
         <button
           className="btn-dark"
           onClick={handleShare}
-          disabled={sharing}
+          disabled={sharing || saving}
           style={{ marginTop: "8px" }}
         >
           {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
+        </button>
+        <button
+          className="btn-handdrawn"
+          onClick={handleSave}
+          disabled={sharing || saving}
+        >
+          {saving ? "กำลังบันทึกรูป..." : "บันทึกรูปไว้แชร์เอง"}
         </button>
         <button className="btn-handdrawn" onClick={onRetake}>
           เล่นอีกครั้ง

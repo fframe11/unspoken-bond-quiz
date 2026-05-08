@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { questions, calculateMBTI } from "@/lib/quizDataNew";
 import LandingPage from "@/components/LandingPage";
 import IntroScene from "@/components/IntroScene";
@@ -7,6 +7,7 @@ import QuestionCard from "@/components/QuestionCard";
 import ResultCard from "@/components/ResultCard";
 import CutsceneDisplay from "@/components/CutsceneDisplay";
 import PageTransition from "@/components/PageTransition";
+import { preloadImages } from "@/lib/assets";
 
 type QuizState =
   | "landing"
@@ -37,6 +38,36 @@ export default function Quiz() {
   const [mbti, setMbti] = useState<string>("");
   const [isAnswered, setIsAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+
+  useEffect(() => {
+    preloadImages([
+      "/images/logo.png",
+      "/images/intro.png",
+      "/images/entry.png",
+      "/images/loadprogress.png",
+      "/images/scene/scene1.png",
+      "/images/progress1.png",
+    ]);
+  }, []);
+
+  useEffect(() => {
+    const nextQuestion = currentQuestion + 1;
+    const nextScene = nextQuestion + 1;
+    const preloadTargets = [
+      `/images/progress${currentQuestion + 1}.png`,
+      `/images/scene/scene${currentQuestion + 1}.png`,
+    ];
+
+    if (nextQuestion < questions.length) {
+      preloadTargets.push(`/images/progress${nextQuestion + 1}.png`);
+    }
+
+    if (nextScene <= questions.length) {
+      preloadTargets.push(`/images/scene/scene${nextScene}.png`);
+    }
+
+    preloadImages(preloadTargets);
+  }, [currentQuestion]);
 
   const handleLandingNext = () => {
     setState("intro");

@@ -354,6 +354,24 @@
     box-shadow: 0 7px 0 #c9edf9, 0 14px 22px rgba(36,48,71,0.07);
   }
 
+  .result-forward-prompt,
+  .answer-feedback {
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    background: #fff3c4;
+    color: #8a5b00;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.35;
+    box-shadow: 0 5px 0 #ffe08a, 0 12px 20px rgba(36,48,71,0.07);
+    animation: softRise 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .result-forward-prompt {
+    padding: 10px 12px;
+    text-align: center;
+  }
+
   .result-hero-image {
     width: calc(100% + 44px);
     margin: 0 -22px;
@@ -988,6 +1006,10 @@
   .answer-list {
     display: grid;
     gap: 10px;
+  }
+
+  .answer-feedback {
+    padding: 9px 12px;
   }
 
   .answer-option {

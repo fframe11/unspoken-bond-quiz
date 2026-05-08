@@ -105,6 +105,12 @@ export default function QuestionCard({
 
         <div className="scene-box question-box">{question.text}</div>
 
+        {selectedOption !== null && (
+          <div className="answer-feedback" role="status">
+            เก็บออร่าข้อนี้แล้ว กำลังพาไปฉากถัดไป
+          </div>
+        )}
+
         <div className="answer-list">
           {question.options.map((option, index) => (
             <button
