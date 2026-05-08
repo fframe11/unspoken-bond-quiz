@@ -201,7 +201,7 @@
 
   .result-collect-card {
     display: grid;
-    gap: 12px;
+    gap: 13px;
     padding: 16px 14px 18px;
     border: 3px solid #ffffff;
     border-radius: 30px;
@@ -218,21 +218,23 @@
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 10px;
-    padding: 7px;
+    padding: 8px 10px;
     border: 2px solid #ffffff;
     border-radius: 999px;
-    background: #fff3c4;
+    background: #ffffff;
     color: #243047;
-    box-shadow: 0 5px 0 #ffd84d;
+    box-shadow: 0 5px 0 #c9edf9;
   }
 
   .result-stage-top span,
   .result-stage-top strong {
     min-width: 0;
-    padding: 6px 10px;
-    border: 2px solid #ffffff;
-    border-radius: 999px;
-    font-size: 11px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: 12px;
     font-weight: 900;
     line-height: 1;
     overflow: hidden;
@@ -241,15 +243,11 @@
   }
 
   .result-stage-top strong {
-    background: #ffd84d;
-    color: #453300;
-    box-shadow: 0 3px 0 #e0ad24;
+    color: #e60012;
   }
 
   .result-stage-top span {
-    background: #e60012;
-    color: #ffffff;
-    box-shadow: 0 3px 0 #a3000d;
+    color: #526071;
   }
 
   .result-brand-line {
@@ -260,10 +258,11 @@
   }
 
   .result-main-title {
-    margin: 0;
+    margin: 2px auto 0;
+    max-width: 340px;
     color: #e60012;
-    font-size: 31px;
-    line-height: 1.08;
+    font-size: 28px;
+    line-height: 1.18;
     text-shadow: 0 3px 0 #ffffff;
   }
 
@@ -298,8 +297,8 @@
     bottom: 12px;
     display: grid;
     gap: 1px;
-    min-width: 112px;
-    padding: 9px 12px;
+    min-width: 122px;
+    padding: 8px 11px;
     border: 3px solid #ffffff;
     border-radius: 18px;
     color: #ffffff;
@@ -308,7 +307,7 @@
   }
 
   .result-rank-medal span {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 1000;
     line-height: 1;
   }
@@ -363,14 +362,59 @@
   .result-detail-card {
     display: grid;
     gap: 12px;
-    padding: 14px;
+    padding: 16px;
     border: 3px solid #ffffff;
     border-radius: 24px;
-    background:
-      linear-gradient(90deg, rgba(255,216,77,0.13) 0 12px, transparent 12px 24px),
-      #ffffff;
+    background: #ffffff;
     box-shadow: 0 7px 0 #c9edf9, 0 14px 22px rgba(36,48,71,0.07);
     text-align: left;
+  }
+
+  .result-summary {
+    margin: 0;
+    color: #243047;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.65;
+  }
+
+  .result-simple-insights {
+    display: grid;
+    gap: 9px;
+  }
+
+  .result-simple-insights article {
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    border: 2px solid #ffffff;
+    border-radius: 18px;
+    background: #eef8fc;
+    box-shadow: 0 5px 0 #c9edf9;
+  }
+
+  .result-simple-insights article:nth-child(2) {
+    background: #fff8d8;
+    box-shadow: 0 5px 0 #ffe08a;
+  }
+
+  .result-simple-insights article:nth-child(3) {
+    background: #fff1f3;
+    box-shadow: 0 5px 0 #ffd7dc;
+  }
+
+  .result-simple-insights span {
+    color: #e60012;
+    font-size: 11px;
+    font-weight: 1000;
+    line-height: 1;
+  }
+
+  .result-simple-insights strong {
+    color: #243047;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.48;
   }
 
   .result-stage-brief {
@@ -466,6 +510,15 @@
     line-height: 1.35;
   }
 
+  .result-party-secondary {
+    padding: 14px;
+    border: 2px solid #ffffff;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 7px 0 #c9edf9, 0 14px 22px rgba(36,48,71,0.07);
+    text-align: left;
+  }
+
   .result-gang-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -512,7 +565,7 @@
     border: 2px solid #ffffff;
     border-radius: 24px;
     background: #ffffff;
-    box-shadow: 0 8px 0 #ffe08a, 0 16px 24px rgba(36,48,71,0.08);
+    box-shadow: 0 7px 0 #ffe08a, 0 16px 24px rgba(36,48,71,0.08);
     text-align: left;
   }
 
@@ -526,7 +579,7 @@
   .result-world-node {
     min-width: 0;
     display: grid;
-    grid-template-columns: 48px 54px 1fr;
+    grid-template-columns: 50px 44px 1fr;
     align-items: center;
     gap: 8px;
     position: relative;
@@ -538,7 +591,7 @@
   }
 
   .result-node-flag {
-    min-width: 44px;
+    min-width: 46px;
     height: 30px;
     display: grid;
     place-items: center;
@@ -552,8 +605,8 @@
   }
 
   .result-node-block {
-    width: 50px;
-    min-height: 50px;
+    width: 44px;
+    min-height: 44px;
     display: grid;
     place-items: center;
     padding: 7px;
@@ -571,7 +624,7 @@
   }
 
   .result-node-block strong {
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .result-node-copy {

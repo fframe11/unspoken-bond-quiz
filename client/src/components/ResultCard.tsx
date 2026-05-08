@@ -337,10 +337,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const relationshipMap = getRelationshipMap(topTrait, secondTrait, pet.name);
   const tier =
     topTrait.value >= 6
-      ? { label: "MYTHIC", sub: "Top Lane Heart Carry", tone: "mythic" }
+      ? { label: "ชัดมาก", sub: "รักแบบเห็นเป็นการกระทำ", tone: "mythic" }
       : topTrait.value >= 5
-        ? { label: "EPIC", sub: "Team Fight Support", tone: "epic" }
-        : { label: "ELITE", sub: "Roaming Soft Power", tone: "elite" };
+        ? { label: "เด่น", sub: "คนใกล้ตัวสัมผัสได้ง่าย", tone: "epic" }
+        : { label: "ละมุน", sub: "รักเงียบ ๆ แต่มีน้ำหนัก", tone: "elite" };
   const keywords = [
     topTrait.title,
     secondTrait.title,
@@ -572,10 +572,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
         <section ref={shareRef} className="result-collect-card" aria-label="การ์ดผลลัพธ์">
           <div className="result-stage-top">
-            <span>WORLD 10-CAT</span>
-            <strong>RESULT CLEAR</strong>
+            <span>ผลลัพธ์แบบทดสอบ</span>
+            <strong>Unspoken Bond</strong>
           </div>
-          <h1 className="result-main-title">Cat Reborn Stage</h1>
+          <h1 className="result-main-title">แมวตัวนี้คือวิธีที่คุณรักคนอื่น</h1>
 
           <div className="result-cat-portrait">
             {pet.image && (
@@ -594,40 +594,21 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </div>
 
           <div className="result-detail-card">
-            <div className="result-stage-brief">
-              <span>PLAYER INSIGHT</span>
-              <p>{profile.hook}</p>
-            </div>
+            <p className="result-summary">{profile.hook}</p>
 
-            <div className="result-power-panel">
-              <strong>POWER-UP SLOTS</strong>
-              <div className="result-keyword-row" aria-label="คีย์เวิร์ดผลลัพธ์">
-                {keywords.map((keyword, index) => (
-                  <span key={keyword}>
-                    <i>{index + 1}</i>
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="result-callout-line">
-              <span>BONUS LINE</span>
-              <strong>“{profile.careTip}”</strong>
-            </div>
-
-            <div className="result-party">
-              <h3>เพื่อนร่วมด่านที่พลังเข้ากัน</h3>
-              <div className="result-gang-row">
-                {gangCats.map((cat) => (
-                  <div className="result-gang-card" key={cat?.mbti}>
-                    {cat?.image && (
-                      <img src={withAssetVersion(cat.image)} alt="" aria-hidden="true" />
-                    )}
-                    <span>{cat?.mbti}</span>
-                  </div>
-                ))}
-              </div>
+            <div className="result-simple-insights" aria-label="สรุปผลลัพธ์หลัก">
+              <article>
+                <span>คนอื่นสัมผัสได้ว่า</span>
+                <strong>{profile.peopleFeel}</strong>
+              </article>
+              <article>
+                <span>พลังรักที่เด่น</span>
+                <strong>{topTrait.summary}</strong>
+              </article>
+              <article>
+                <span>ถ้าอยากให้ชัดขึ้น</span>
+                <strong>{profile.blindSpot}</strong>
+              </article>
             </div>
           </div>
         </section>
@@ -660,7 +641,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
         <section className="result-world-panel">
           <div className="result-map-header">
-            <span>สรุปพลังรักของคุณ</span>
+            <span>รายละเอียดวิธีรักของคุณ</span>
             <strong>{auraColorName}</strong>
           </div>
 
@@ -684,11 +665,21 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </div>
         </section>
 
-        <div className="result-insight-grid">
-          <div className="result-insight-card primary">
-            <span>คนรอบตัวจะรู้สึกว่า</span>
-            <strong>{profile.peopleFeel}</strong>
+        <div className="result-party result-party-secondary">
+          <h3>ผลลัพธ์ใกล้เคียงที่อาจเจอในเพื่อน</h3>
+          <div className="result-gang-row">
+            {gangCats.map((cat) => (
+              <div className="result-gang-card" key={cat?.mbti}>
+                {cat?.image && (
+                  <img src={withAssetVersion(cat.image)} alt="" aria-hidden="true" />
+                )}
+                <span>{cat?.mbti}</span>
+              </div>
+            ))}
           </div>
+        </div>
+
+        <div className="result-insight-grid">
           <div className="result-insight-card">
             <span>แผนที่วิธีรัก</span>
             <strong>{relationshipMap}</strong>
