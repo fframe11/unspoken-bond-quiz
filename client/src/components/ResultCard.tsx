@@ -494,17 +494,25 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
       });
 
     // Draw Aura Pill
-    context.fillStyle = topTrait.color + "1A"; // 10% opacity
-    context.strokeStyle = topTrait.color + "4D"; // 30% opacity
+    context.fillStyle = pet.auraColor + "1A"; // 10% opacity
+    context.strokeStyle = pet.auraColor + "4D"; // 30% opacity
     context.lineWidth = 3;
     drawRoundedRect(context, 240, 1180, 600, 60, 30);
     context.fill();
     context.stroke();
 
-    context.fillStyle = ink;
+    const auraLabel = "ออร่าของคุณ: ";
     context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-    context.textAlign = "center";
-    context.fillText(`ออร่าของคุณ: ${auraColorName}`, 540, 1222);
+    const labelWidth = context.measureText(auraLabel).width;
+    const valueWidth = context.measureText(auraColorName).width;
+    const totalWidth = labelWidth + valueWidth;
+    const startX = 540 - totalWidth / 2;
+
+    context.fillStyle = ink;
+    context.textAlign = "left";
+    context.fillText(auraLabel, startX, 1222);
+    context.fillStyle = pet.auraColor;
+    context.fillText(auraColorName, startX + labelWidth, 1222);
 
     // Draw White Insight Card
     context.fillStyle = "#ffffff";
@@ -695,11 +703,11 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         </div>
 
         <section className="result-world-panel">
-          <div className="result-aura-banner">
-             <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
-             <div className="aura-info">
+          <div className="result-aura-banner" style={{ background: `linear-gradient(135deg, ${pet.auraColor}15, ${pet.auraColor}33)`, border: `2px solid ${pet.auraColor}55` }}>
+             <div className="aura-icon-box" style={{ background: pet.auraColor }}>✦</div>
+             <div className="aura-info" style={{ gap: '4px' }}>
                <span>ออร่าของคุณ</span>
-               <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
+               <strong style={{ color: pet.auraColor, lineHeight: '1.2' }}>{auraColorName}</strong>
              </div>
           </div>
 
