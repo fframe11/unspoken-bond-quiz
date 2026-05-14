@@ -500,28 +500,30 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         )}
 
         <section className="result-world-panel">
-          <div className="result-map-header">
-            <span>รายละเอียดวิธีรักของคุณ</span>
-            <strong>{auraColorName}</strong>
+          <div className="result-aura-banner" style={{ background: `linear-gradient(135deg, ${topTrait.color}15, ${topTrait.color}33)`, border: `2px solid ${topTrait.color}55` }}>
+             <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
+             <div className="aura-info">
+               <span>ออร่าของคุณ</span>
+               <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
+             </div>
           </div>
 
-          <div className="result-world-track" aria-label="สรุปพลังรัก 4 ด้าน">
-            {statRows.map((row, index) => (
-              <div
-                className="result-world-node"
-                key={row.key}
-                style={{ "--node-color": row.color } as CSSProperties}
-              >
-                <div className="result-node-flag">LV.{index + 1}</div>
-                <div className="result-node-block">
-                  <strong>{row.value}</strong>
+          <div className="result-chart-box">
+            <h3>สัดส่วนวิธีรักของคุณ</h3>
+            <div className="result-chart-bars">
+              {statRows.map((row) => (
+                <div className="chart-bar-item" key={row.key}>
+                  <div className="chart-bar-header">
+                    <span className="chart-bar-title">{row.title}</span>
+                    <strong className="chart-bar-score" style={{ color: row.color }}>{row.value}</strong>
+                  </div>
+                  <div className="chart-bar-track-bg">
+                    <div className="chart-bar-fill" style={{ width: row.width, backgroundColor: row.color }} />
+                  </div>
+                  <p className="chart-bar-desc">{row.summary}</p>
                 </div>
-                <div className="result-node-copy">
-                  <strong>{row.title}</strong>
-                  <p>{row.summary}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
