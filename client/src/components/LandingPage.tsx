@@ -17,9 +17,6 @@ export default function LandingPage({ onNext }: LandingPageProps) {
   const { isSoundOn, toggleSound } = useMusicPlayer();
 
   const handleStart = () => {
-    if (!isSoundOn) {
-      toggleSound();
-    }
     onNext();
   };
 
