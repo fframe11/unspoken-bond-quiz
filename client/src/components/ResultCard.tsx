@@ -3,7 +3,7 @@ import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import html2canvas from "html2canvas"; // Will be removed
+import html2canvas from "html2canvas";
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -424,145 +424,96 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     .filter(Boolean);
 
   const createResultImageBlob = async () => {
+    if (!shareRef.current) throw new Error("Share reference not found");
     await document.fonts?.ready;
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1920;
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Unable to create share canvas");
+    const el = shareRef.current;
+    
+    // Temporarily remove glassmorphism so html2canvas renders it vibrantly
+    const originalBg = el.style.background;
+    const originalBoxShadow = el.style.boxShadow;
+    const originalBorderRadius = el.style.borderRadius;
+    const originalMargin = el.style.margin;
+    
+    el.style.background = "#ffffff";
+    el.style.boxShadow = "none";
+    el.style.borderRadius = "32px";
+    el.style.margin = "0";
 
-    const brandRed = "#e60012";
-    const ink = "#243047";
-    const muted = "#697386";
+    const cardCanvas = await html2canvas(el, {
+      scale: 2, // High resolution
+      useCORS: true,
+      backgroundColor: null, // transparent
+      windowWidth: 460, // force mobile width
+    });
 
-    context.fillStyle = "#f7f7f2";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    // Restore original styles
+    el.style.background = originalBg;
+    el.style.boxShadow = originalBoxShadow;
+    el.style.borderRadius = originalBorderRadius;
+    el.style.margin = originalMargin;
 
-    const gradient = context.createLinearGradient(0, 0, canvas.width, 980);
-    gradient.addColorStop(0, "#fff3c4");
-    gradient.addColorStop(0.55, "#ffffff");
-    gradient.addColorStop(1, "#eef8fc");
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, canvas.width, 990);
+    // Create the final 1080x1920 IG Story Canvas
+    const wrapperCanvas = document.createElement("canvas");
+    wrapperCanvas.width = 1080;
+    wrapperCanvas.height = 1920;
+    const ctx = wrapperCanvas.getContext("2d");
+    if (!ctx) throw new Error("Unable to create wrapper canvas");
 
-    context.fillStyle = "#e60012";
-    drawRoundedRect(context, 78, 96, 924, 22, 999);
-    context.fill();
+    // Draw full background gradient
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, 1920);
+    bgGradient.addColorStop(0, "#eef8fc");
+    bgGradient.addColorStop(0.5, "#ffffff");
+    bgGradient.addColorStop(1, "#fff3c4");
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, 1080, 1920);
 
-    if (pet.image) {
-      const catImage = await loadShareImage(withAssetVersion(pet.image));
-      const maxWidth = 820;
-      const maxHeight = 660;
-      const imageRatio = catImage.width / catImage.height;
-      const boxRatio = maxWidth / maxHeight;
-      const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
-      const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
-      const drawX = (canvas.width - drawWidth) / 2;
-      const drawY = 150 + (maxHeight - drawHeight) / 2;
-
-      context.save();
-      context.shadowColor = "rgba(36,48,71,0.14)";
-      context.shadowBlur = 28;
-      context.shadowOffsetY = 18;
-      context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
-      context.restore();
+    // Calculate scaling to fit the card inside the 1080x1920 wrapper
+    let cardWidth = 960;
+    let cardHeight = (cardCanvas.height * cardWidth) / cardCanvas.width;
+    
+    // Max height allows space for the Aura pill and margins
+    const maxCardHeight = 1560; 
+    if (cardHeight > maxCardHeight) {
+      cardHeight = maxCardHeight;
+      cardWidth = (cardCanvas.width * cardHeight) / cardCanvas.height;
     }
 
-    context.fillStyle = brandRed;
-    drawRoundedRect(context, 426, 820, 228, 78, 999);
-    context.fill();
-    context.fillStyle = "#ffffff";
-    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
-    context.textAlign = "center";
-    context.fillText(pet.mbti, 540, 871);
+    const cardX = (1080 - cardWidth) / 2;
+    const cardY = (1920 - cardHeight - 180) / 2; // leaves space below
 
-    context.fillStyle = ink;
-    context.font = "800 62px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-    wrapCanvasText(context, pet.name, 900)
-      .slice(0, 2)
-      .forEach((line, index) => {
-        context.fillText(line, 540, 986 + index * 68);
-      });
+    // Draw a soft shadow for the card
+    ctx.shadowColor = "rgba(0, 0, 0, 0.08)";
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetY = 20;
+    ctx.drawImage(cardCanvas, cardX, cardY, cardWidth, cardHeight);
+    
+    // Reset shadow
+    ctx.shadowColor = "transparent";
 
-    context.fillStyle = brandRed;
-    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
-    wrapCanvasText(context, profile.headline, 840)
-      .slice(0, 2)
-      .forEach((line, index) => {
-        context.fillText(line, 540, 1108 + index * 45);
-      });
-
-    // Draw Aura Pill
-    context.fillStyle = pet.auraColor + "1A"; // 10% opacity
-    context.strokeStyle = pet.auraColor + "4D"; // 30% opacity
-    context.lineWidth = 3;
-    drawRoundedRect(context, 240, 1180, 600, 60, 30);
-    context.fill();
-    context.stroke();
+    // Draw the Aura Pill below the card
+    const auraY = cardY + cardHeight + 70;
+    ctx.fillStyle = pet.auraColor + "1A"; // 10% opacity
+    ctx.strokeStyle = pet.auraColor + "4D"; // 30% opacity
+    ctx.lineWidth = 4;
+    drawRoundedRect(ctx, 240, auraY, 600, 80, 40);
+    ctx.fill();
+    ctx.stroke();
 
     const auraLabel = "ออร่าของคุณ: ";
-    context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-    const labelWidth = context.measureText(auraLabel).width;
-    const valueWidth = context.measureText(auraColorName).width;
+    ctx.font = "800 36px 'IBM Plex Sans Thai', sans-serif";
+    const labelWidth = ctx.measureText(auraLabel).width;
+    const valueWidth = ctx.measureText(auraColorName).width;
     const totalWidth = labelWidth + valueWidth;
     const startX = 540 - totalWidth / 2;
 
-    context.fillStyle = ink;
-    context.textAlign = "left";
-    context.fillText(auraLabel, startX, 1222);
-    context.fillStyle = pet.auraColor;
-    context.fillText(auraColorName, startX + labelWidth, 1222);
+    ctx.fillStyle = "#243047";
+    ctx.textAlign = "left";
+    ctx.fillText(auraLabel, startX, auraY + 52);
+    ctx.fillStyle = pet.auraColor;
+    ctx.fillText(auraColorName, startX + labelWidth, auraY + 52);
 
-    // Draw White Insight Card
-    context.fillStyle = "#ffffff";
-    context.shadowColor = "rgba(36,48,71,0.12)";
-    context.shadowBlur = 18;
-    context.shadowOffsetY = 10;
-    drawRoundedRect(context, 90, 1270, 900, 240, 34);
-    context.fill();
-    context.shadowColor = "transparent";
-
-    context.textAlign = "left";
-    context.fillStyle = muted;
-    context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText("อ่านแล้วเข้าใจตัวเองใน 5 วิ", 140, 1330);
-    context.fillStyle = brandRed;
-    context.font = "800 42px 'Mali', 'IBM Plex Sans Thai', sans-serif";
-    context.fillText(topTrait.title, 140, 1390);
-    context.fillStyle = "#3a4658";
-    context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
-    wrapCanvasText(context, traitShareCopy[topTrait.key] || profile.hook, 800)
-      .slice(0, 3)
-      .forEach((line, index) => {
-        context.fillText(line, 140, 1444 + index * 40);
-      });
-
-    let statY = 1560;
-    statRows.forEach((row) => {
-      context.fillStyle = ink;
-      context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-      context.fillText(row.title, 110, statY);
-      context.textAlign = "right";
-      context.fillText(String(row.value), 970, statY);
-      context.textAlign = "left";
-      context.fillStyle = "#edf2f5";
-      drawRoundedRect(context, 110, statY + 18, 860, 22, 999);
-      context.fill();
-      context.fillStyle = row.color;
-      drawRoundedRect(
-        context,
-        110,
-        statY + 18,
-        Math.max(130, (860 * row.value) / maxScore),
-        22,
-        999
-      );
-      context.fill();
-      statY += 74;
-    });
-
-    return canvasToBlob(canvas);
+    return canvasToBlob(wrapperCanvas);
   };
 
   const downloadBlob = (blob: Blob) => {
