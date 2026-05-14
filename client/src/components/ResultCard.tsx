@@ -3,7 +3,7 @@ import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas"; // Will be removed
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -214,6 +214,92 @@ function getRelationshipMap(
   return `${petName} เด่นที่ "${topTrait.title}" และมี "${secondTrait.title}" คอยเสริม แปลว่าคุณไม่ได้แค่รักแบบเดียว แต่ปรับวิธีดูแลคนตามสถานการณ์ได้ดี`;
 }
 
+function wrapCanvasText(
+  context: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+) {
+  const words = text.includes(" ")
+    ? text.split(/(\s+)/).filter((part) => part.trim())
+    : Array.from(text);
+  const lines: string[] = [];
+  let line = "";
+
+  words.forEach((word) => {
+    const hasSpace = text.includes(" ");
+    const nextLine = line ? `${line}${hasSpace ? " " : ""}${word}` : word;
+    if (context.measureText(nextLine).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = nextLine;
+    }
+  });
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawRoundedRect(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - safeRadius,
+    y + height
+  );
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement) {
+  return new Promise<Blob>((resolve, reject) => {
+    if (canvas.toBlob) {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Unable to create image blob"));
+        }
+      }, "image/png");
+      return;
+    }
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const binary = atob(dataUrl.split(",")[1] || "");
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    resolve(new Blob([bytes], { type: "image/png" }));
+  });
+}
+
+async function loadShareImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
 
 export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const mbtiType = calculateMBTI(scores as any);
@@ -338,22 +424,137 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     .filter(Boolean);
 
   const createResultImageBlob = async () => {
-    if (!shareRef.current) throw new Error("Share reference not found");
+    await document.fonts?.ready;
 
-    // Capture the exact DOM node that displays the UI
-    const canvas = await html2canvas(shareRef.current, {
-      scale: 2, // Higher resolution
-      useCORS: true, // Allow external images
-      backgroundColor: "#f7f7f2",
-      windowWidth: 460, // Mimic mobile width so styling matches what user sees
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Unable to create share canvas");
+
+    const brandRed = "#e60012";
+    const ink = "#243047";
+    const muted = "#697386";
+
+    context.fillStyle = "#f7f7f2";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 980);
+    gradient.addColorStop(0, "#fff3c4");
+    gradient.addColorStop(0.55, "#ffffff");
+    gradient.addColorStop(1, "#eef8fc");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, 990);
+
+    context.fillStyle = "#e60012";
+    drawRoundedRect(context, 78, 96, 924, 22, 999);
+    context.fill();
+
+    if (pet.image) {
+      const catImage = await loadShareImage(withAssetVersion(pet.image));
+      const maxWidth = 820;
+      const maxHeight = 660;
+      const imageRatio = catImage.width / catImage.height;
+      const boxRatio = maxWidth / maxHeight;
+      const drawWidth = imageRatio > boxRatio ? maxWidth : maxHeight * imageRatio;
+      const drawHeight = imageRatio > boxRatio ? maxWidth / imageRatio : maxHeight;
+      const drawX = (canvas.width - drawWidth) / 2;
+      const drawY = 150 + (maxHeight - drawHeight) / 2;
+
+      context.save();
+      context.shadowColor = "rgba(36,48,71,0.14)";
+      context.shadowBlur = 28;
+      context.shadowOffsetY = 18;
+      context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
+      context.restore();
+    }
+
+    context.fillStyle = brandRed;
+    drawRoundedRect(context, 426, 820, 228, 78, 999);
+    context.fill();
+    context.fillStyle = "#ffffff";
+    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+    context.textAlign = "center";
+    context.fillText(pet.mbti, 540, 871);
+
+    context.fillStyle = ink;
+    context.font = "800 62px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, pet.name, 900)
+      .slice(0, 2)
+      .forEach((line, index) => {
+        context.fillText(line, 540, 986 + index * 68);
+      });
+
+    context.fillStyle = brandRed;
+    context.font = "800 38px 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, profile.headline, 840)
+      .slice(0, 2)
+      .forEach((line, index) => {
+        context.fillText(line, 540, 1108 + index * 45);
+      });
+
+    // Draw Aura Pill
+    context.fillStyle = topTrait.color + "1A"; // 10% opacity
+    context.strokeStyle = topTrait.color + "4D"; // 30% opacity
+    context.lineWidth = 3;
+    drawRoundedRect(context, 240, 1180, 600, 60, 30);
+    context.fill();
+    context.stroke();
+
+    context.fillStyle = ink;
+    context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+    context.textAlign = "center";
+    context.fillText(`ออร่าของคุณ: ${auraColorName}`, 540, 1222);
+
+    // Draw White Insight Card
+    context.fillStyle = "#ffffff";
+    context.shadowColor = "rgba(36,48,71,0.12)";
+    context.shadowBlur = 18;
+    context.shadowOffsetY = 10;
+    drawRoundedRect(context, 90, 1270, 900, 240, 34);
+    context.fill();
+    context.shadowColor = "transparent";
+
+    context.textAlign = "left";
+    context.fillStyle = muted;
+    context.font = "800 27px 'IBM Plex Sans Thai', sans-serif";
+    context.fillText("อ่านแล้วเข้าใจตัวเองใน 5 วิ", 140, 1330);
+    context.fillStyle = brandRed;
+    context.font = "800 42px 'Mali', 'IBM Plex Sans Thai', sans-serif";
+    context.fillText(topTrait.title, 140, 1390);
+    context.fillStyle = "#3a4658";
+    context.font = "700 31px 'IBM Plex Sans Thai', sans-serif";
+    wrapCanvasText(context, traitShareCopy[topTrait.key] || profile.hook, 800)
+      .slice(0, 3)
+      .forEach((line, index) => {
+        context.fillText(line, 140, 1444 + index * 40);
+      });
+
+    let statY = 1560;
+    statRows.forEach((row) => {
+      context.fillStyle = ink;
+      context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+      context.fillText(row.title, 110, statY);
+      context.textAlign = "right";
+      context.fillText(String(row.value), 970, statY);
+      context.textAlign = "left";
+      context.fillStyle = "#edf2f5";
+      drawRoundedRect(context, 110, statY + 18, 860, 22, 999);
+      context.fill();
+      context.fillStyle = row.color;
+      drawRoundedRect(
+        context,
+        110,
+        statY + 18,
+        Math.max(130, (860 * row.value) / maxScore),
+        22,
+        999
+      );
+      context.fill();
+      statY += 74;
     });
 
-    return new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error("Canvas to Blob conversion failed"));
-      }, "image/png");
-    });
+    return canvasToBlob(canvas);
   };
 
   const downloadBlob = (blob: Blob) => {
@@ -471,48 +672,46 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               </div>
             </div>
           </div>
-          
-          {/* Moved these sections INSIDE shareRef so they appear in the exported image */}
-          <section className="result-world-panel" style={{ marginTop: '20px', padding: '0', border: 'none', background: 'transparent', boxShadow: 'none' }}>
-            <div className="result-aura-banner" style={{ background: `linear-gradient(135deg, ${topTrait.color}15, ${topTrait.color}33)`, border: `2px solid ${topTrait.color}55` }}>
-               <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
-               <div className="aura-info">
-                 <span>ออร่าของคุณ</span>
-                 <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
-               </div>
-            </div>
+        </section>
 
-            <div className="result-chart-box">
-              <h3>สัดส่วนวิธีรักของคุณ</h3>
-              <div className="result-chart-bars">
-                {statRows.map((row) => (
-                  <div className="chart-bar-item" key={row.key}>
-                    <div className="chart-bar-header">
-                      <span className="chart-bar-title">{row.title}</span>
-                      <strong className="chart-bar-score" style={{ color: row.color }}>{row.value}</strong>
-                    </div>
-                    <div className="chart-bar-track-bg">
-                      <div className="chart-bar-fill" style={{ width: row.width, backgroundColor: row.color }} />
-                    </div>
-                    <p className="chart-bar-desc">{row.summary}</p>
+        <section className="result-world-panel">
+          <div className="result-aura-banner">
+             <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
+             <div className="aura-info">
+               <span>ออร่าของคุณ</span>
+               <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
+             </div>
+          </div>
+
+          <div className="result-chart-box">
+            <h3>สัดส่วนวิธีรักของคุณ</h3>
+            <div className="result-chart-bars">
+              {statRows.map((row) => (
+                <div className="chart-bar-item" key={row.key}>
+                  <div className="chart-bar-header">
+                    <span className="chart-bar-title">{row.title}</span>
+                    <strong className="chart-bar-score" style={{ color: row.color }}>{row.value}</strong>
                   </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <div className="result-insight-grid" style={{ marginTop: '20px' }}>
-            <div className="result-insight-card">
-              <span>แผนที่วิธีรัก</span>
-              <strong>{relationshipMap}</strong>
-            </div>
-            <div className="result-insight-card">
-              <span>จุดที่ควรรู้ตัว</span>
-              <strong>{profile.blindSpot}</strong>
+                  <div className="chart-bar-track-bg">
+                    <div className="chart-bar-fill" style={{ width: row.width, backgroundColor: row.color }} />
+                  </div>
+                  <p className="chart-bar-desc">{row.summary}</p>
+                </div>
+              ))}
             </div>
           </div>
-          
         </section>
+
+        <div className="result-insight-grid">
+          <div className="result-insight-card">
+            <span>แผนที่วิธีรัก</span>
+            <strong>{relationshipMap}</strong>
+          </div>
+          <div className="result-insight-card">
+            <span>จุดที่ควรรู้ตัว</span>
+            <strong>{profile.blindSpot}</strong>
+          </div>
+        </div>
 
         <div className="result-actions">
           <button
