@@ -471,6 +471,51 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               </div>
             </div>
           </div>
+          
+          {/* Moved these sections INSIDE shareRef so they appear in the exported image */}
+          <section className="result-world-panel" style={{ marginTop: '20px', padding: '0', border: 'none', background: 'transparent', boxShadow: 'none' }}>
+            <div className="result-aura-banner" style={{ background: `linear-gradient(135deg, ${topTrait.color}15, ${topTrait.color}33)`, border: `2px solid ${topTrait.color}55` }}>
+               <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
+               <div className="aura-info">
+                 <span>ออร่าของคุณ</span>
+                 <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
+               </div>
+            </div>
+
+            <div className="result-chart-box">
+              <h3>สัดส่วนวิธีรักของคุณ</h3>
+              <div className="result-chart-bars">
+                {statRows.map((row) => (
+                  <div className="chart-bar-item" key={row.key}>
+                    <div className="chart-bar-header">
+                      <span className="chart-bar-title">{row.title}</span>
+                      <strong className="chart-bar-score" style={{ color: row.color }}>{row.value}</strong>
+                    </div>
+                    <div className="chart-bar-track-bg">
+                      <div className="chart-bar-fill" style={{ width: row.width, backgroundColor: row.color }} />
+                    </div>
+                    <p className="chart-bar-desc">{row.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <div className="result-insight-grid" style={{ marginTop: '20px' }}>
+            <div className="result-insight-card">
+              <span>แผนที่วิธีรัก</span>
+              <strong>{relationshipMap}</strong>
+            </div>
+            <div className="result-insight-card">
+              <span>จุดที่ควรรู้ตัว</span>
+              <strong>{profile.blindSpot}</strong>
+            </div>
+          </div>
+          
+          <div style={{ textAlign: "center", marginTop: "32px", marginBottom: "12px", color: "#697386", fontSize: "14px", fontWeight: 800 }}>
+            อยากรู้ว่าคุณเป็นแมวแบบไหน? <br/>
+            <span style={{ color: "#e60012" }}>unspoken-bond-quiz.vercel.app</span>
+          </div>
         </section>
 
         <div className="result-actions">
@@ -498,45 +543,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             ส่งให้เพื่อนเล่นต่อ แล้วดูว่าเขาเป็นแมวที่รักคนแบบไหน
           </div>
         )}
-
-        <section className="result-world-panel">
-          <div className="result-aura-banner" style={{ background: `linear-gradient(135deg, ${topTrait.color}15, ${topTrait.color}33)`, border: `2px solid ${topTrait.color}55` }}>
-             <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
-             <div className="aura-info">
-               <span>ออร่าของคุณ</span>
-               <strong style={{ color: topTrait.color }}>{auraColorName}</strong>
-             </div>
-          </div>
-
-          <div className="result-chart-box">
-            <h3>สัดส่วนวิธีรักของคุณ</h3>
-            <div className="result-chart-bars">
-              {statRows.map((row) => (
-                <div className="chart-bar-item" key={row.key}>
-                  <div className="chart-bar-header">
-                    <span className="chart-bar-title">{row.title}</span>
-                    <strong className="chart-bar-score" style={{ color: row.color }}>{row.value}</strong>
-                  </div>
-                  <div className="chart-bar-track-bg">
-                    <div className="chart-bar-fill" style={{ width: row.width, backgroundColor: row.color }} />
-                  </div>
-                  <p className="chart-bar-desc">{row.summary}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <div className="result-insight-grid">
-          <div className="result-insight-card">
-            <span>แผนที่วิธีรัก</span>
-            <strong>{relationshipMap}</strong>
-          </div>
-          <div className="result-insight-card">
-            <span>จุดที่ควรรู้ตัว</span>
-            <strong>{profile.blindSpot}</strong>
-          </div>
-        </div>
       </div>
     </div>
   );
