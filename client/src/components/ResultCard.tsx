@@ -512,10 +512,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             </div>
           </div>
           
-          <div style={{ textAlign: "center", marginTop: "32px", marginBottom: "12px", color: "#697386", fontSize: "14px", fontWeight: 800 }}>
-            อยากรู้ว่าคุณเป็นแมวแบบไหน? <br/>
-            <span style={{ color: "#e60012" }}>unspoken-bond-quiz.vercel.app</span>
-          </div>
         </section>
 
         <div className="result-actions">
