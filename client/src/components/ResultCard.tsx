@@ -534,11 +534,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </button>
         </div>
 
-        {shareHint && (
-          <div className="result-forward-prompt" role="status">
-            ส่งให้เพื่อนเล่นต่อ แล้วดูว่าเขาเป็นแมวที่รักคนแบบไหน
-          </div>
-        )}
       </div>
     </div>
   );
