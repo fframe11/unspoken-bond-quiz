@@ -3,7 +3,7 @@ import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import html2canvas from "html2canvas";
+// No html2canvas needed
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -428,23 +428,13 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     await document.fonts?.ready;
 
     const el = shareRef.current;
-    
-    // Ensure all images are fully loaded before capture to prevent blurriness
-    const images = Array.from(el.querySelectorAll('img'));
-    await Promise.all(images.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-    }));
 
-    // Capture the exact card DOM with high scale for maximum clarity
-    const cardCanvas = await html2canvas(el, {
-      scale: 3, 
-      useCORS: true,
-      backgroundColor: null,
-      logging: false,
+    // Use html-to-image for native pixel-perfect rendering (solves faded color bug)
+    const { toCanvas } = await import("html-to-image");
+    
+    const cardCanvas = await toCanvas(el, {
+      pixelRatio: 3, 
+      backgroundColor: 'transparent',
     });
 
     // Create the full 1080x1920 canvas for IG Story
