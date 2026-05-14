@@ -674,6 +674,26 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           </div>
         </section>
 
+        <div className="result-actions">
+          <button
+            className="btn-dark"
+            onClick={handleShare}
+            disabled={sharing || saving}
+          >
+            {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
+          </button>
+          <button
+            className="btn-handdrawn"
+            onClick={handleSave}
+            disabled={sharing || saving}
+          >
+            {saving ? "กำลังบันทึกรูป..." : "Download Image"}
+          </button>
+          <button className="btn-handdrawn" onClick={onRetake}>
+            เล่นใหม่
+          </button>
+        </div>
+
         <section className="result-world-panel">
           <div className="result-aura-banner">
              <div className="aura-icon-box" style={{ background: topTrait.color }}>✦</div>
@@ -711,26 +731,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
             <span>จุดที่ควรรู้ตัว</span>
             <strong>{profile.blindSpot}</strong>
           </div>
-        </div>
-
-        <div className="result-actions">
-          <button
-            className="btn-dark"
-            onClick={handleShare}
-            disabled={sharing || saving}
-          >
-            {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
-          </button>
-          <button
-            className="btn-handdrawn"
-            onClick={handleSave}
-            disabled={sharing || saving}
-          >
-            {saving ? "กำลังบันทึกรูป..." : "Download Image"}
-          </button>
-          <button className="btn-handdrawn" onClick={onRetake}>
-            เล่นใหม่
-          </button>
         </div>
 
       </div>
