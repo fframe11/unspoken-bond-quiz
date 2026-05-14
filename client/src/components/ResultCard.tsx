@@ -3,7 +3,7 @@ import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-// No html2canvas import needed
+import html2canvas from "html2canvas";
 
 interface ResultCardProps {
   scores: Record<string, number>;
@@ -424,162 +424,80 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     .filter(Boolean);
 
   const createResultImageBlob = async () => {
+    if (!shareRef.current) throw new Error("Share reference not found");
     await document.fonts?.ready;
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1920;
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("Unable to create share canvas");
-
-    const brandRed = "#e60012";
-    const ink = "#243047";
-    const muted = "#697386";
-
-    // 1. Background Gradient
-    const gradient = context.createLinearGradient(0, 0, canvas.width, 1920);
-    gradient.addColorStop(0, "#eef8fc");
-    gradient.addColorStop(0.5, "#ffffff");
-    gradient.addColorStop(1, "#fff3c4");
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    // 2. Top Pill
-    context.fillStyle = "#ffffff";
-    drawRoundedRect(context, 200, 80, 680, 60, 30);
-    context.fill();
-    context.fillStyle = brandRed;
-    drawRoundedRect(context, 206, 86, 320, 48, 24);
-    context.fill();
+    const el = shareRef.current;
     
-    context.fillStyle = "#ffffff";
-    context.font = "700 22px 'IBM Plex Sans Thai', sans-serif";
-    context.textAlign = "center";
-    context.fillText("✦ การ์ดผลลัพธ์ของคุณ", 366, 118);
-    context.fillStyle = brandRed;
-    context.fillText("Unspoken Bond", 710, 118);
+    // Ensure all images are fully loaded before capture to prevent blurriness
+    const images = Array.from(el.querySelectorAll('img'));
+    await Promise.all(images.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
 
-    // 3. Title
-    context.fillStyle = brandRed;
-    context.font = "800 64px 'Mali', sans-serif";
-    context.fillText("ฉันเป็นแมว ?", 540, 240);
-
-    // 4. Cat Image
-    if (pet.image) {
-      const catImage = await loadShareImage(withAssetVersion(pet.image));
-      const drawWidth = 560;
-      const drawHeight = (catImage.height * drawWidth) / catImage.width;
-      const drawX = (1080 - drawWidth) / 2;
-      const drawY = 280;
-      context.drawImage(catImage, drawX, drawY, drawWidth, drawHeight);
-    }
-
-    // 5. Rank Badge
-    const badgeY = 780;
-    const badgeGrad = context.createLinearGradient(240, badgeY, 840, badgeY);
-    badgeGrad.addColorStop(0, "#b164e8");
-    badgeGrad.addColorStop(1, "#5cd1ff");
-    context.fillStyle = badgeGrad;
-    drawRoundedRect(context, 240, badgeY, 600, 100, 50);
-    context.fill();
-    context.fillStyle = "#ffffff";
-    context.font = "900 36px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText(tier.label.toUpperCase(), 540, badgeY + 44);
-    context.font = "700 24px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText(tier.sub, 540, badgeY + 76);
-
-    // 6. Name Lockup
-    context.fillStyle = brandRed;
-    drawRoundedRect(context, 440, 920, 200, 60, 30);
-    context.fill();
-    context.fillStyle = "#ffffff";
-    context.font = "800 32px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText(pet.mbti, 540, 962);
-
-    context.fillStyle = ink;
-    context.font = "800 64px 'Mali', sans-serif";
-    context.fillText(pet.name, 540, 1080);
-
-    context.fillStyle = muted;
-    context.font = "700 28px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText(profile.headline, 540, 1130);
-
-    // 7. Insight Box
-    context.fillStyle = "rgba(255, 255, 255, 0.8)";
-    drawRoundedRect(context, 60, 1170, 960, 280, 40);
-    context.fill();
-    context.strokeStyle = "rgba(255, 255, 255, 1)";
-    context.lineWidth = 4;
-    context.stroke();
-
-    context.fillStyle = ink;
-    context.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
-    wrapCanvasText(context, profile.hook, 860).forEach((line, i) => {
-        context.fillText(line, 540, 1230 + i * 40);
+    // Capture the exact card DOM with high scale for maximum clarity
+    const cardCanvas = await html2canvas(el, {
+      scale: 3, 
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
     });
 
-    const boxW = 280;
-    const boxY = 1300;
-    const boxGap = 30;
-    const boxX1 = 540 - boxW - boxGap;
-    const boxX2 = 540;
-    const boxX3 = 540 + boxW + boxGap;
+    // Create the full 1080x1920 canvas for IG Story
+    const wrapperCanvas = document.createElement("canvas");
+    wrapperCanvas.width = 1080;
+    wrapperCanvas.height = 1920;
+    const ctx = wrapperCanvas.getContext("2d");
+    if (!ctx) throw new Error("Unable to create wrapper canvas");
 
-    const drawSmallBox = (x: number, title: string, text: string, bg: string) => {
-        context.fillStyle = bg;
-        drawRoundedRect(context, x - boxW/2, boxY, boxW, 120, 24);
-        context.fill();
-        context.fillStyle = brandRed;
-        context.font = "800 22px 'IBM Plex Sans Thai', sans-serif";
-        context.textAlign = "left";
-        context.fillText(title, x - boxW/2 + 24, boxY + 36);
-        context.fillStyle = ink;
-        context.font = "700 22px 'IBM Plex Sans Thai', sans-serif";
-        wrapCanvasText(context, text, 240).forEach((line, i) => {
-            context.fillText(line, x - boxW/2 + 24, boxY + 70 + i * 32);
-        });
-        context.textAlign = "center";
-    };
+    // Draw a beautiful soft gradient background for the IG Story
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, 1920);
+    bgGradient.addColorStop(0, "#eef8fc");
+    bgGradient.addColorStop(0.5, "#ffffff");
+    bgGradient.addColorStop(1, "#fff3c4");
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, 1080, 1920);
 
-    drawSmallBox(boxX1, "ฟีลที่ให้", compactInsights.feel, "#f0f8ff");
-    drawSmallBox(boxX2, "จุดเด่น", compactInsights.gift, "#fffdf0");
-    drawSmallBox(boxX3, "ทริคเล็กๆ", compactInsights.tip, "#fff0f5");
-
-    // 8. Gang Cats
-    context.fillStyle = ink;
-    context.font = "800 32px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText("แมวตัวอื่นที่เข้ากับคุณ", 540, 1530);
-
-    const gangW = 180;
-    const gangGap = 40;
-    const gangStartX = 540 - (gangW * 1.5 + gangGap * 1.5);
+    // Calculate dimensions to fit the card beautifully inside 1080x1920
+    let cardWidth = 980; // Leaving 50px padding on each side
+    let cardHeight = (cardCanvas.height * cardWidth) / cardCanvas.width;
     
-    for (let i = 0; i < gangCats.length; i++) {
-        const cat = gangCats[i];
-        const x = gangStartX + i * (gangW + gangGap);
-        context.fillStyle = "#ffffff";
-        drawRoundedRect(context, x, 1570, gangW, 200, 30);
-        context.fill();
-        
-        if (cat?.image) {
-            const catImg = await loadShareImage(withAssetVersion(cat.image));
-            context.drawImage(catImg, x + 20, 1590, 140, 140);
-        }
-        
-        context.fillStyle = muted;
-        context.font = "800 24px 'IBM Plex Sans Thai', sans-serif";
-        context.fillText(cat?.mbti || "", x + gangW/2, 1740);
+    // Max height leaves room for the bottom link and top padding
+    const maxCardHeight = 1640; 
+    if (cardHeight > maxCardHeight) {
+      cardHeight = maxCardHeight;
+      cardWidth = (cardCanvas.width * cardHeight) / cardCanvas.height;
     }
 
-    // 9. Bottom Link
-    context.fillStyle = "#ffffff";
-    drawRoundedRect(context, 80, 1820, 920, 80, 40);
-    context.fill();
-    context.fillStyle = brandRed;
-    context.font = "800 32px 'IBM Plex Sans Thai', sans-serif";
-    context.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", 540, 1872);
+    const cardX = (1080 - cardWidth) / 2;
+    const cardY = (1920 - cardHeight - 140) / 2; // leaves space at bottom for link
 
-    return canvasToBlob(canvas);
+    // Draw a nice drop shadow for the card so it pops
+    ctx.shadowColor = "rgba(36, 48, 71, 0.15)";
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetY = 20;
+    ctx.drawImage(cardCanvas, cardX, cardY, cardWidth, cardHeight);
+    
+    // Reset shadow for the bottom link
+    ctx.shadowColor = "transparent";
+
+    // Draw the "เล่นได้ที่..." pill at the bottom
+    const linkY = cardY + cardHeight + 50;
+    ctx.fillStyle = "#ffffff";
+    drawRoundedRect(ctx, 80, linkY, 920, 70, 35);
+    ctx.fill();
+    
+    // Text for the link
+    ctx.fillStyle = "#e60012"; // brandRed
+    ctx.font = "800 32px 'IBM Plex Sans Thai', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", 540, linkY + 46);
+
+    return canvasToBlob(wrapperCanvas);
   };
 
   const downloadBlob = (blob: Blob) => {
