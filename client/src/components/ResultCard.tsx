@@ -1,7 +1,7 @@
 import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 // No html2canvas needed
 
@@ -307,6 +307,27 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const shareRef = useRef<HTMLDivElement>(null);
   const [sharing, setSharing] = useState(false);
   const [shareHint, setShareHint] = useState(false);
+  const [preGeneratedFile, setPreGeneratedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const generate = async () => {
+      try {
+        await document.fonts?.ready;
+        // Wait a bit for layout to settle
+        await new Promise(resolve => setTimeout(resolve, 800));
+        if (!mounted || !shareRef.current) return;
+        const blob = await createResultImageBlob();
+        if (mounted) {
+          setPreGeneratedFile(new File([blob], "unspoken-bond-result.png", { type: "image/png" }));
+        }
+      } catch (e) {
+        console.error("Pre-generate failed", e);
+      }
+    };
+    generate();
+    return () => { mounted = false; };
+  }, []);
 
   if (!pet) {
     return (
@@ -504,17 +525,20 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     setSharing(true);
 
     try {
-      const blob = await createResultImageBlob();
-      const file = new File([blob], "unspoken-bond-result.png", {
-        type: "image/png",
-      });
+      let fileToShare = preGeneratedFile;
+      if (!fileToShare) {
+        const blob = await createResultImageBlob();
+        fileToShare = new File([blob], "unspoken-bond-result.png", {
+          type: "image/png",
+        });
+      }
 
-      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      if (navigator.share && navigator.canShare?.({ files: [fileToShare] })) {
         try {
           await navigator.share({
             title: "Unspoken Bond Quiz",
             text: `แมวตัวนี้คือวิธีที่ฉันรักคนอื่น: ${pet.name} (${pet.mbti})`,
-            files: [file],
+            files: [fileToShare],
           });
           setShareHint(true);
           setSharing(false);
@@ -524,7 +548,7 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
         }
       }
 
-      downloadBlob(blob);
+      downloadBlob(fileToShare);
       setShareHint(true);
       setSharing(false);
     } catch {
