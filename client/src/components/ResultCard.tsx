@@ -449,63 +449,50 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
 
     const el = shareRef.current;
 
-    // Use html-to-image for native pixel-perfect rendering (solves faded color bug)
+    // Use html-to-image for native pixel-perfect rendering
     const { toCanvas } = await import("html-to-image");
     
     const cardCanvas = await toCanvas(el, {
       pixelRatio: 3, 
-      backgroundColor: 'transparent',
+      backgroundColor: '#ffffff', // Use white to prevent transparent bleeding issues
     });
 
-    // Create the full 1080x1920 canvas for IG Story
+    // Create a dynamic wrapper canvas that matches the card's native ratio perfectly
+    const paddingX = 80;
+    const paddingTop = 80;
+    const paddingBottom = 200; // Extra space for link at the bottom
+
     const wrapperCanvas = document.createElement("canvas");
-    wrapperCanvas.width = 1080;
-    wrapperCanvas.height = 1920;
+    wrapperCanvas.width = cardCanvas.width + (paddingX * 2);
+    wrapperCanvas.height = cardCanvas.height + paddingTop + paddingBottom;
     const ctx = wrapperCanvas.getContext("2d");
     if (!ctx) throw new Error("Unable to create wrapper canvas");
 
-    // Draw a beautiful soft gradient background for the IG Story
-    const bgGradient = ctx.createLinearGradient(0, 0, 0, 1920);
+    // Draw a beautiful soft gradient background that fills the new wrapper
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, wrapperCanvas.height);
     bgGradient.addColorStop(0, "#eef8fc");
     bgGradient.addColorStop(0.5, "#ffffff");
     bgGradient.addColorStop(1, "#fff3c4");
     ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, 1080, 1920);
+    ctx.fillRect(0, 0, wrapperCanvas.width, wrapperCanvas.height);
 
-    // Calculate dimensions to fit the card beautifully inside 1080x1920
-    let cardWidth = 980; // Leaving 50px padding on each side
-    let cardHeight = (cardCanvas.height * cardWidth) / cardCanvas.width;
+    // Draw the card canvas perfectly without adding any extra buggy shadows
+    ctx.drawImage(cardCanvas, paddingX, paddingTop);
     
-    // Max height leaves room for the bottom link and top padding
-    const maxCardHeight = 1640; 
-    if (cardHeight > maxCardHeight) {
-      cardHeight = maxCardHeight;
-      cardWidth = (cardCanvas.width * cardHeight) / cardCanvas.height;
-    }
-
-    const cardX = (1080 - cardWidth) / 2;
-    const cardY = (1920 - cardHeight - 140) / 2; // leaves space at bottom for link
-
-    // Draw a nice drop shadow for the card so it pops
-    ctx.shadowColor = "rgba(36, 48, 71, 0.15)";
-    ctx.shadowBlur = 40;
-    ctx.shadowOffsetY = 20;
-    ctx.drawImage(cardCanvas, cardX, cardY, cardWidth, cardHeight);
-    
-    // Reset shadow for the bottom link
-    ctx.shadowColor = "transparent";
-
     // Draw the "เล่นได้ที่..." pill at the bottom
-    const linkY = cardY + cardHeight + 50;
+    const linkY = paddingTop + cardCanvas.height + 60;
+    const pillHeight = Math.max(70, cardCanvas.height * 0.04);
     ctx.fillStyle = "#ffffff";
-    drawRoundedRect(ctx, 80, linkY, 920, 70, 35);
+    drawRoundedRect(ctx, paddingX, linkY, cardCanvas.width, pillHeight, pillHeight / 2);
     ctx.fill();
     
     // Text for the link
     ctx.fillStyle = "#e60012"; // brandRed
-    ctx.font = "800 32px 'IBM Plex Sans Thai', sans-serif";
+    const fontSize = Math.floor(pillHeight * 0.5); 
+    ctx.font = `800 ${fontSize}px 'IBM Plex Sans Thai', sans-serif`;
     ctx.textAlign = "center";
-    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", 540, linkY + 46);
+    ctx.textBaseline = "middle";
+    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", wrapperCanvas.width / 2, linkY + (pillHeight / 2));
 
     return canvasToBlob(wrapperCanvas);
   };
