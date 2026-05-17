@@ -619,6 +619,27 @@
     margin: 0;
   }
 
+  .screenshot-hint {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: #526071;
+    padding: 10px 0 0;
+    margin: 0;
+  }
+
+  .result-screenshot-link {
+    margin-top: 6px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #e60012, #ff4d6a);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
   .result-world-panel {
     padding: 14px;
     border: 2px solid #ffffff;

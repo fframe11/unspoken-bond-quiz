@@ -1,7 +1,6 @@
 import { calculateMBTI, getResultCat } from "@/lib/quizDataNew";
 import SoundToggle from "@/components/SoundToggle";
 import { withAssetVersion } from "@/lib/assets";
-import { useRef, useState, useEffect } from "react";
 import type { CSSProperties } from "react";
 // No html2canvas needed
 
@@ -304,30 +303,7 @@ async function loadShareImage(src: string) {
 export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const mbtiType = calculateMBTI(scores as any);
   const pet = getResultCat(mbtiType);
-  const shareRef = useRef<HTMLDivElement>(null);
-  const [sharing, setSharing] = useState(false);
-  const [shareHint, setShareHint] = useState(false);
-  const [preGeneratedFile, setPreGeneratedFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    const generate = async () => {
-      try {
-        await document.fonts?.ready;
-        // Wait a bit for layout to settle
-        await new Promise(resolve => setTimeout(resolve, 800));
-        if (!mounted || !shareRef.current) return;
-        const blob = await createResultImageBlob();
-        if (mounted) {
-          setPreGeneratedFile(new File([blob], "unspoken-bond-result.png", { type: "image/png" }));
-        }
-      } catch (e) {
-        console.error("Pre-generate failed", e);
-      }
-    };
-    generate();
-    return () => { mounted = false; };
-  }, []);
 
   if (!pet) {
     return (
@@ -443,125 +419,14 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     .map((type) => getResultCat(type))
     .filter(Boolean);
 
-  const createResultImageBlob = async () => {
-    if (!shareRef.current) throw new Error("Share reference not found");
-    await document.fonts?.ready;
 
-    const el = shareRef.current;
-
-    // Use html-to-image for native pixel-perfect rendering
-    const { toCanvas } = await import("html-to-image");
-    
-    const cardCanvas = await toCanvas(el, {
-      pixelRatio: 2, 
-      backgroundColor: '#ffffff',
-    });
-
-    // Fixed 1080x1920 canvas for IG Story (9:16)
-    const W = 1080;
-    const H = 1920;
-    const wrapperCanvas = document.createElement("canvas");
-    wrapperCanvas.width = W;
-    wrapperCanvas.height = H;
-    const ctx = wrapperCanvas.getContext("2d");
-    if (!ctx) throw new Error("Unable to create wrapper canvas");
-
-    // Draw gradient background
-    const bgGradient = ctx.createLinearGradient(0, 0, 0, H);
-    bgGradient.addColorStop(0, "#eef8fc");
-    bgGradient.addColorStop(0.5, "#ffffff");
-    bgGradient.addColorStop(1, "#fff3c4");
-    ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, W, H);
-
-    // Calculate card draw size — fill width, but if too tall, scale down to fit
-    const maxCardWidth = W - 40;    // 20px padding each side
-    const maxCardHeight = H - 140;  // Leave room for link pill at bottom
-    const cardAspect = cardCanvas.width / cardCanvas.height;
-
-    let cardDrawWidth = maxCardWidth;
-    let cardDrawHeight = cardDrawWidth / cardAspect;
-
-    // If the card is too tall, scale it down to fit
-    if (cardDrawHeight > maxCardHeight) {
-      cardDrawHeight = maxCardHeight;
-      cardDrawWidth = cardDrawHeight * cardAspect;
-    }
-
-    const cardX = (W - cardDrawWidth) / 2;
-    const cardY = Math.max(10, (H - cardDrawHeight - 120) / 2);
-
-    // Draw the card (no extra canvas shadow — card has its own CSS styling)
-    ctx.drawImage(cardCanvas, cardX, cardY, cardDrawWidth, cardDrawHeight);
-    
-    // Draw the "เล่นได้ที่..." pill at the bottom
-    const linkY = Math.min(cardY + cardDrawHeight + 25, H - 80);
-    ctx.fillStyle = "#ffffff";
-    drawRoundedRect(ctx, 60, linkY, W - 120, 64, 32);
-    ctx.fill();
-    
-    // Text for the link
-    ctx.fillStyle = "#e60012";
-    ctx.font = "800 28px 'IBM Plex Sans Thai', sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", W / 2, linkY + 32);
-
-    return canvasToBlob(wrapperCanvas);
-  };
-
-  const downloadBlob = (blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "unspoken-bond-result.png";
-    a.click();
-    window.setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 1000);
-  };
-
-  const handleShare = async () => {
-    setSharing(true);
-
-    try {
-      let fileToShare = preGeneratedFile;
-      if (!fileToShare) {
-        const blob = await createResultImageBlob();
-        fileToShare = new File([blob], "unspoken-bond-result.png", {
-          type: "image/png",
-        });
-      }
-
-      if (navigator.share && navigator.canShare?.({ files: [fileToShare] })) {
-        try {
-          await navigator.share({
-            title: "Unspoken Bond Quiz",
-            text: `แมวตัวนี้คือวิธีที่ฉันรักคนอื่น: ${pet.name} (${pet.mbti})`,
-            files: [fileToShare],
-          });
-          setShareHint(true);
-          setSharing(false);
-          return;
-        } catch {
-          /* fallback below */
-        }
-      }
-
-      downloadBlob(fileToShare);
-      setShareHint(true);
-      setSharing(false);
-    } catch {
-      setSharing(false);
-    }
-  };
 
   return (
     <div className="quiz-page">
       <div className="phone-screen result-screen relative animate-fadeIn">
         <SoundToggle />
 
-        <section ref={shareRef} className="result-collect-card" aria-label="การ์ดผลลัพธ์">
+        <section className="result-collect-card" aria-label="การ์ดผลลัพธ์">
           <div className="result-stage-top">
             <span>การ์ดผลลัพธ์ของคุณ</span>
             <strong>Unspoken Bond</strong>
@@ -616,16 +481,14 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               </div>
             </div>
           </div>
+
+          <div className="result-screenshot-link">
+            เล่นได้ที่ foundy.tigerfoundationtech.co.th
+          </div>
         </section>
 
         <div className="result-actions">
-          <button
-            className="btn-dark"
-            onClick={handleShare}
-            disabled={sharing}
-          >
-            {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
-          </button>
+          <p className="screenshot-hint">📸 แคปหน้าจอเพื่อแชร์ผลลัพธ์ได้เลย!</p>
           <button className="btn-handdrawn" onClick={onRetake}>
             เล่นใหม่
           </button>
