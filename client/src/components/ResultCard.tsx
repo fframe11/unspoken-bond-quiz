@@ -481,10 +481,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
               </div>
             </div>
           </div>
-
-          <div className="result-screenshot-link">
-            เล่นได้ที่ foundy.tigerfoundationtech.co.th
-          </div>
         </section>
 
         <div className="result-actions">
