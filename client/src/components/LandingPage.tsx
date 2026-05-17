@@ -59,8 +59,10 @@ export default function LandingPage({ onNext }: LandingPageProps) {
         </div>
 
         <div className="scene-box discovery-box">
-          <span>ความรู้สึกที่ซ่อนอยู่</span>
-          ไม่ใช่ทุกความห่วงใยจะบอกผ่านคำพูด... ลองมาค้นหาดูว่าวิธีที่คุณดูแลคนสำคัญนั้น ตรงกับแมวตัวไหน
+          <span>ภาษารักที่คุณเผลอใช้</span>
+          คุณอาจไม่ได้พูดคำว่ารักบ่อย ๆ<br />
+          แต่บางการกระทำของคุณ กำลังบอกใครบางคนว่า<br />
+          “ฉันแคร์เธอนะ”
         </div>
 
         <button className="btn-dark btn-pulse" onClick={handleStart}>
