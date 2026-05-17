@@ -454,45 +454,48 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     
     const cardCanvas = await toCanvas(el, {
       pixelRatio: 3, 
-      backgroundColor: '#ffffff', // Use white to prevent transparent bleeding issues
+      backgroundColor: '#ffffff',
     });
 
-    // Create a dynamic wrapper canvas that matches the card's native ratio perfectly
-    const paddingX = 80;
-    const paddingTop = 80;
-    const paddingBottom = 200; // Extra space for link at the bottom
-
+    // Fixed 1080x1920 canvas for IG Story (9:16)
+    const W = 1080;
+    const H = 1920;
     const wrapperCanvas = document.createElement("canvas");
-    wrapperCanvas.width = cardCanvas.width + (paddingX * 2);
-    wrapperCanvas.height = cardCanvas.height + paddingTop + paddingBottom;
+    wrapperCanvas.width = W;
+    wrapperCanvas.height = H;
     const ctx = wrapperCanvas.getContext("2d");
     if (!ctx) throw new Error("Unable to create wrapper canvas");
 
-    // Draw a beautiful soft gradient background that fills the new wrapper
-    const bgGradient = ctx.createLinearGradient(0, 0, 0, wrapperCanvas.height);
+    // Draw gradient background
+    const bgGradient = ctx.createLinearGradient(0, 0, 0, H);
     bgGradient.addColorStop(0, "#eef8fc");
     bgGradient.addColorStop(0.5, "#ffffff");
     bgGradient.addColorStop(1, "#fff3c4");
     ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, wrapperCanvas.width, wrapperCanvas.height);
+    ctx.fillRect(0, 0, W, H);
 
-    // Draw the card canvas perfectly without adding any extra buggy shadows
-    ctx.drawImage(cardCanvas, paddingX, paddingTop);
+    // Scale the card to fill nearly the full width (20px padding each side)
+    const cardDrawWidth = W - 40;
+    const cardDrawHeight = (cardCanvas.height / cardCanvas.width) * cardDrawWidth;
+    const cardX = 20;
+    // Center vertically but leave 120px at the bottom for the link pill
+    const cardY = Math.max(20, (H - cardDrawHeight - 120) / 2);
+
+    // Draw the card WITHOUT any canvas shadow (the card already has its own styling)
+    ctx.drawImage(cardCanvas, cardX, cardY, cardDrawWidth, cardDrawHeight);
     
     // Draw the "เล่นได้ที่..." pill at the bottom
-    const linkY = paddingTop + cardCanvas.height + 60;
-    const pillHeight = Math.max(70, cardCanvas.height * 0.04);
+    const linkY = cardY + cardDrawHeight + 30;
     ctx.fillStyle = "#ffffff";
-    drawRoundedRect(ctx, paddingX, linkY, cardCanvas.width, pillHeight, pillHeight / 2);
+    drawRoundedRect(ctx, 60, linkY, W - 120, 70, 35);
     ctx.fill();
     
     // Text for the link
-    ctx.fillStyle = "#e60012"; // brandRed
-    const fontSize = Math.floor(pillHeight * 0.5); 
-    ctx.font = `800 ${fontSize}px 'IBM Plex Sans Thai', sans-serif`;
+    ctx.fillStyle = "#e60012";
+    ctx.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", wrapperCanvas.width / 2, linkY + (pillHeight / 2));
+    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", W / 2, linkY + 35);
 
     return canvasToBlob(wrapperCanvas);
   };
