@@ -1545,11 +1545,11 @@
     position: absolute;
     left: clamp(18px, var(--progress), calc(100% - 18px));
     top: 50%;
-    width: 42px;
-    height: 42px;
+    width: 72px;
+    height: 72px;
     object-fit: contain;
     pointer-events: none;
-    transform: translate(-50%, -58%);
+    transform: translate(-50%, -50%);
     filter: drop-shadow(0 5px 6px rgba(36,48,71,0.18));
     transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     animation: catNudge 1.3s ease-in-out infinite;
