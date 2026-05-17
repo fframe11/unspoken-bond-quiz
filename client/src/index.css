@@ -201,8 +201,8 @@
 
   .result-collect-card {
     display: grid;
-    gap: 8px;
-    padding: 12px 12px 14px;
+    gap: 6px;
+    padding: 10px 12px 12px;
     border: 3px solid #ffffff;
     border-radius: 30px;
     background:
@@ -284,12 +284,12 @@
   }
 
   .result-cat-portrait {
-    min-height: 160px;
+    min-height: 140px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
     margin: 0 -8px;
-    padding: 4px 14px 16px;
+    padding: 2px 14px 12px;
     position: relative;
     background: transparent;
     overflow: hidden;
@@ -320,8 +320,8 @@
   .result-cat-portrait img {
     position: relative;
     z-index: 2;
-    width: min(65%, 220px);
-    max-height: 190px;
+    width: min(58%, 200px);
+    max-height: 170px;
     object-fit: contain;
     object-position: center bottom;
     filter: drop-shadow(0 12px 14px rgba(36,48,71,0.14));
@@ -424,8 +424,8 @@
 
   .result-detail-card {
     display: grid;
-    gap: 8px;
-    padding: 12px;
+    gap: 6px;
+    padding: 10px;
     border: 3px solid #ffffff;
     border-radius: 24px;
     background: #ffffff;
