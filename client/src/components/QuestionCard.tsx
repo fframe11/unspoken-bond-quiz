@@ -66,7 +66,7 @@ export default function QuestionCard({
         >
           <div className="progress-glow" style={{ width: `${progressPercent}%` }} />
           <img
-            src={withAssetVersion("/images/loadprogress.png")}
+            src={withAssetVersion("/images/pngegg.png")}
             alt=""
             className="progress-cat"
             aria-hidden="true"
