@@ -61,7 +61,8 @@ export default function LandingPage({ onNext }: LandingPageProps) {
         <div className="scene-box discovery-box">
           <span>ภาษารักที่คุณเผลอใช้</span>
           คุณอาจไม่ได้พูดคำว่ารักบ่อย ๆ<br />
-          แต่บางการกระทำของคุณ กำลังบอกใครบางคนว่า<br />
+          แต่สิ่งเล็ก ๆ ที่คุณทำ<br />
+          อาจกำลังบอกใครบางคนว่า<br />
           “ฉันแคร์เธอนะ”
         </div>
 
