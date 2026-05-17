@@ -306,7 +306,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
   const pet = getResultCat(mbtiType);
   const shareRef = useRef<HTMLDivElement>(null);
   const [sharing, setSharing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [shareHint, setShareHint] = useState(false);
 
   if (!pet) {
@@ -533,18 +532,6 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-
-    try {
-      const blob = await createResultImageBlob();
-      downloadBlob(blob);
-      setShareHint(true);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <div className="quiz-page">
       <div className="phone-screen result-screen relative animate-fadeIn">
@@ -611,16 +598,9 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
           <button
             className="btn-dark"
             onClick={handleShare}
-            disabled={sharing || saving}
+            disabled={sharing}
           >
             {sharing ? "กำลังสร้างรูป..." : "แชร์ลง Story"}
-          </button>
-          <button
-            className="btn-handdrawn"
-            onClick={handleSave}
-            disabled={sharing || saving}
-          >
-            {saving ? "กำลังบันทึกรูป..." : "Download Image"}
           </button>
           <button className="btn-handdrawn" onClick={onRetake}>
             เล่นใหม่
