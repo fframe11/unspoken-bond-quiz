@@ -324,8 +324,6 @@
     max-height: 140px;
     object-fit: contain;
     object-position: center bottom;
-    filter: drop-shadow(0 12px 14px rgba(36,48,71,0.14));
-    mix-blend-mode: multiply;
     animation: catReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
