@@ -453,12 +453,8 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     const { toCanvas } = await import("html-to-image");
     
     const cardCanvas = await toCanvas(el, {
-      pixelRatio: 3, 
+      pixelRatio: 2, 
       backgroundColor: '#ffffff',
-      cacheBust: true,
-      // Inline all images to avoid CORS/loading issues
-      imagePlaceholder: undefined,
-      fetchRequestInit: { mode: 'cors', cache: 'force-cache' },
     });
 
     // Fixed 1080x1920 canvas for IG Story (9:16)
