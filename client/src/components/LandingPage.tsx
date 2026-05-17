@@ -59,8 +59,8 @@ export default function LandingPage({ onNext }: LandingPageProps) {
         </div>
 
         <div className="scene-box discovery-box">
-          <span>เพื่อนเห็นแล้วต้องอยากรู้ของตัวเอง</span>
-          ผลลัพธ์ไม่ได้บอกแค่ว่าเป็นแมวอะไร แต่แปลวิธีรักของคุณให้คนอื่นอ่านแล้วเข้าใจในไม่กี่วินาที
+          <span>ความรู้สึกที่ซ่อนอยู่</span>
+          ไม่ใช่ทุกความห่วงใยจะบอกผ่านคำพูด... ลองมาค้นหาดูว่าวิธีที่คุณดูแลคนสำคัญนั้น ตรงกับแมวตัวไหน
         </div>
 
         <button className="btn-dark btn-pulse" onClick={handleStart}>
