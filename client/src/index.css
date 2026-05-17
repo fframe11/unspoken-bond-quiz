@@ -1308,6 +1308,10 @@
     text-transform: none;
   }
 
+  .hero-copy {
+    margin-top: 14px;
+    margin-bottom: -10px;
+  }
   .hero-copy h1 {
     margin: -10px 0 8px;
     font-size: clamp(28px, 8vw, 38px);
