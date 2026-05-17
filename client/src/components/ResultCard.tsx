@@ -455,6 +455,10 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     const cardCanvas = await toCanvas(el, {
       pixelRatio: 3, 
       backgroundColor: '#ffffff',
+      cacheBust: true,
+      // Inline all images to avoid CORS/loading issues
+      imagePlaceholder: undefined,
+      fetchRequestInit: { mode: 'cors', cache: 'force-cache' },
     });
 
     // Fixed 1080x1920 canvas for IG Story (9:16)
@@ -474,28 +478,38 @@ export default function ResultCard({ scores, onRetake }: ResultCardProps) {
     ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, W, H);
 
-    // Scale the card to fill nearly the full width (20px padding each side)
-    const cardDrawWidth = W - 40;
-    const cardDrawHeight = (cardCanvas.height / cardCanvas.width) * cardDrawWidth;
-    const cardX = 20;
-    // Center vertically but leave 120px at the bottom for the link pill
-    const cardY = Math.max(20, (H - cardDrawHeight - 120) / 2);
+    // Calculate card draw size — fill width, but if too tall, scale down to fit
+    const maxCardWidth = W - 40;    // 20px padding each side
+    const maxCardHeight = H - 140;  // Leave room for link pill at bottom
+    const cardAspect = cardCanvas.width / cardCanvas.height;
 
-    // Draw the card WITHOUT any canvas shadow (the card already has its own styling)
+    let cardDrawWidth = maxCardWidth;
+    let cardDrawHeight = cardDrawWidth / cardAspect;
+
+    // If the card is too tall, scale it down to fit
+    if (cardDrawHeight > maxCardHeight) {
+      cardDrawHeight = maxCardHeight;
+      cardDrawWidth = cardDrawHeight * cardAspect;
+    }
+
+    const cardX = (W - cardDrawWidth) / 2;
+    const cardY = Math.max(10, (H - cardDrawHeight - 120) / 2);
+
+    // Draw the card (no extra canvas shadow — card has its own CSS styling)
     ctx.drawImage(cardCanvas, cardX, cardY, cardDrawWidth, cardDrawHeight);
     
     // Draw the "เล่นได้ที่..." pill at the bottom
-    const linkY = cardY + cardDrawHeight + 30;
+    const linkY = Math.min(cardY + cardDrawHeight + 25, H - 80);
     ctx.fillStyle = "#ffffff";
-    drawRoundedRect(ctx, 60, linkY, W - 120, 70, 35);
+    drawRoundedRect(ctx, 60, linkY, W - 120, 64, 32);
     ctx.fill();
     
     // Text for the link
     ctx.fillStyle = "#e60012";
-    ctx.font = "800 30px 'IBM Plex Sans Thai', sans-serif";
+    ctx.font = "800 28px 'IBM Plex Sans Thai', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", W / 2, linkY + 35);
+    ctx.fillText("เล่นได้ที่ https://foundy.tigerfoundationtech.co.th/", W / 2, linkY + 32);
 
     return canvasToBlob(wrapperCanvas);
   };
